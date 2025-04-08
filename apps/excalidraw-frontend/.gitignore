@@ -20,6 +20,11 @@
 # production
 /build
 
+#config
+/config.ts
+**/config.ts
+**/config.js
+
 # misc
 .DS_Store
 *.pem

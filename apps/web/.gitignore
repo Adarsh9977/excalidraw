@@ -20,6 +20,11 @@
 .DS_Store
 *.pem
 
+#config
+/config.ts
+**/config.ts
+**/config.js
+
 # debug
 npm-debug.log*
 yarn-debug.log*
