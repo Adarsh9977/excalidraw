@@ -273,3 +273,107 @@ app.post('/invite/:userId', middleware, async(req, res) => {
   }
 });
 
+app.post('/join-room', middleware, async(req, res) => {
+  const roomId = req.body;
+  const userId = (req as any).userId;
+  if(!roomId || !userId) {
+    res.status(400).json({ error: 'Room ID and User ID are required' });
+    return;
+  }
+  try {
+    const room = await prismaClient.room.findUnique({
+      where: { id: roomId },
+      include: { admin: true },
+    });
+
+    if (!room) {
+      res.status(404).json({ error: 'Room not found' });
+      return;
+    }
+
+    const user = await prismaClient.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    await prismaClient.roomUser.create({
+      data: {
+        userId: user.id,
+        roomId: room.id,
+        role: 'editor'
+      }
+    });
+
+    res.status(200).json({ message: 'Joined room successfully' });
+  } catch (error) {
+    res.status(400).json({ error: 'Error while joining room' });
+  }
+});
+
+app.delete('/users/:userId', middleware, async(req, res) => {
+  const userId = req.params.userId;
+  const roomId = req.body.roomId;
+  if(!userId ||!roomId) {
+    res.status(400).json({ error: 'User ID and Room ID are required' });
+    return;
+  }
+
+  try {
+    const user = await prismaClient.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    await prismaClient.roomUser.deleteMany({
+      where: {
+        userId: user.id,
+        roomId: roomId
+      }
+    });
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(400).json({ error: error });
+  }
+});
+
+app.put('/room/:userId', middleware, async(req, res) => {
+  const userId = req.params.userID;
+  const roomId = req.body.roomId;
+  const role = req.body.role;
+  if(!userId ||!roomId ||!role) {
+    res.status(400).json({ error: 'User ID and Room ID are required' });
+    return;
+  }
+  try {
+    const user = await prismaClient.user.findUnique({
+      where: { id: userId }
+    });
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+    await prismaClient.roomUser.update({
+      where: {
+        userId_roomId: {
+          userId: user.id,
+          roomId: Number(roomId)
+        }
+      },
+      data: {
+        role: role
+      }
+    });
+    res.status(200).json({ message: 'User updated successfully' });
+  } catch (error) {
+    res.status(400).json({ error: 'Error while updating user' }); 
+  }
+});
+
