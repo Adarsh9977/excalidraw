@@ -111,24 +111,6 @@ app.post('/room', middleware, async(req, res) => {
   }
 });
 
-app.delete('/room/:roomId', middleware, async(req, res) => {
-  const roomId = Number(req.params.roomId);
-  if(!roomId) {
-    res.status(400).json({ error: 'Room ID is required' });
-    return;
-  }
-  try {
-    await prismaClient.room.delete({
-      where: {
-        id: roomId
-      }
-    });
-    res.status(200).json({ message: 'Room deleted successfully' });
-  } catch (error) {
-    res.status(400).json({ error: 'Error while deleting room' });
-  }
-});
-
 app.get('/rooms', async (req, res)=>{
   const userId = (req as any).userId;
   try {
@@ -274,7 +256,7 @@ app.post('/invite/:userId', middleware, async(req, res) => {
 });
 
 app.post('/join-room', middleware, async(req, res) => {
-  const roomId = req.body;
+  const roomId = req.body.roomId;
   const userId = (req as any).userId;
   if(!roomId || !userId) {
     res.status(400).json({ error: 'Room ID and User ID are required' });
@@ -340,7 +322,7 @@ app.delete('/users/:userId', middleware, async(req, res) => {
     });
     res.status(200).json({ message: 'User deleted successfully' });
   } catch (error) {
-    res.status(400).json({ error: error });
+    res.status(400).json({ error: "Error while deleting user" });
   }
 });
 
