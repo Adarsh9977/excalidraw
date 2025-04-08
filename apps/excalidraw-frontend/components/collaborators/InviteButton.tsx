@@ -8,15 +8,17 @@ import { toast } from 'sonner';
 
 interface InviteButtonProps {
   rooms: Array<{ id: string; name: string; collaboratorsCount: number }>;
+  users: Array<{ id: string; name: string; email: string }>;
 }
 
-export function InviteButton({ rooms }: InviteButtonProps) {
+export function InviteButton({ rooms, users }: InviteButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleInvite = async (roomId: string, email: string) => {
+  const handleInvite = async (roomId: string, userId: string) => {
     // This would be replaced with an actual API call
-    console.log('Inviting', email, 'to room', roomId);
-    toast.success(`Invitation sent to ${email}`);
+    const user = users.find(u => u.id === userId);
+    console.log('Inviting user', userId, 'to room', roomId);
+    toast.success(`Invitation sent to ${user?.name}`);
   };
 
   return (
@@ -34,6 +36,7 @@ export function InviteButton({ rooms }: InviteButtonProps) {
         isOpen={isOpen}
         onOpenChange={setIsOpen}
         rooms={rooms}
+        users={users}
         onInvite={handleInvite}
       />
     </>

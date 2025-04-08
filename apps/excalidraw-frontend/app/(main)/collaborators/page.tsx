@@ -11,6 +11,7 @@ async function getCollaborators() {
       name: 'Alex Johnson',
       email: 'alex@example.com',
       role: 'Editor',
+      room: 'room-1',
       avatarUrl: 'https://i.pravatar.cc/150?u=alex'
     },
     {
@@ -18,6 +19,7 @@ async function getCollaborators() {
       name: 'Sam Smith',
       email: 'sam@example.com',
       role: 'Viewer',
+      room: 'room-1',
       avatarUrl: 'https://i.pravatar.cc/150?u=sam'
     },
     {
@@ -25,6 +27,7 @@ async function getCollaborators() {
       name: 'Jordan Lee',
       email: 'jordan@example.com',
       role: 'Editor',
+      room: 'room-4',
       avatarUrl: 'https://i.pravatar.cc/150?u=jordan'
     },
     {
@@ -32,6 +35,7 @@ async function getCollaborators() {
       name: 'Taylor Morgan',
       email: 'taylor@example.com',
       role: 'Admin',
+      room: 'room-2',
       avatarUrl: 'https://i.pravatar.cc/150?u=taylor'
     }
   ];
@@ -43,6 +47,16 @@ async function getRooms() {
     { id: '1', name: 'User Flow Diagram', collaboratorsCount: 3 },
     { id: '2', name: 'Product Roadmap', collaboratorsCount: 5 },
     { id: '3', name: 'Website Wireframe', collaboratorsCount: 2 }
+  ];
+}
+
+async function getUsers() {
+  // Simulate API call
+  return [
+    { id: '1', name: 'Alex Johnson', email: 'alex@example.com' },
+    { id: '2', name: 'Sam Smith', email: 'sam@example.com' },
+    { id: '3', name: 'Jordan Lee', email: 'jordan@example.com' },
+    { id: '4', name: 'Taylor Morgan', email: 'taylor@example.com' }
   ];
 }
 
@@ -65,6 +79,7 @@ function CollaboratorsLoading() {
 export default async function CollaboratorsPage() {
   const collaborators = await getCollaborators();
   const rooms = await getRooms();
+  const users = await getUsers();
 
   return (
       <div className="p-4 sm:p-6 space-y-6 sm:space-y-8 bg-gradient-to-br from-violet-50/30 to-transparent dark:from-violet-950/20 dark:to-transparent">
@@ -76,7 +91,7 @@ export default async function CollaboratorsPage() {
             <p className="text-muted-foreground mt-1">Manage your team and invite new members</p>
           </div>
 
-          <InviteButton rooms={rooms} />
+          <InviteButton rooms={rooms} users={users} />
         </header>
 
         <Suspense fallback={<CollaboratorsLoading />}>

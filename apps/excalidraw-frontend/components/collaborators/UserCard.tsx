@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion';
-import { Mail, Link, Users } from 'lucide-react';
+import { Mail, Link, Users, Activity } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ interface Collaborator {
   name: string;
   email: string;
   role: string;
+  room: string;
   avatarUrl: string;
 }
 
@@ -87,17 +88,13 @@ export const UserCard = ({ collaborator }: UserCardProps) => {
             <Mail size={14} className="text-violet-500 flex-shrink-0" />
             <span className="truncate">{collaborator.email}</span>
           </div>
+          <div className='flex items-center gap-2 text-xs sm:text-sm text-muted-foreground'>
+            <Activity size={14} className="text-violet-500 flex-shrink-0" />
+            <span className="text-xs sm:text-sm">{collaborator.room}</span>
+          </div>
         </CardContent>
 
         <CardFooter className="flex flex-col sm:flex-row sm:justify-between gap-2 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/10 dark:to-purple-900/10 p-4 sm:p-6">
-          <Button
-            size="sm"
-            variant="outline"
-            className="w-full sm:w-auto border-violet-200 dark:border-violet-800 hover:bg-violet-100 dark:hover:bg-violet-900/50 text-violet-600 dark:text-violet-400 text-xs sm:text-sm"
-            onClick={copyInviteLink}
-          >
-            <Link size={14} className="mr-1" /> Copy Link
-          </Button>
 
           <Popover>
             <PopoverTrigger asChild>

@@ -9,25 +9,46 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  name      String
-  avatar    String?
-  rooms     Room[]
-  chats     Chat[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String     @id @default(uuid())
+  email           String     @unique
+  password        String
+  name            String
+  avatar          String?
+  adminRooms      Room[]     @relation("RoomAdmin")
+  collaborations  RoomUser[]
+  chats           Chat[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
 }
 
 model Room {
-  id        Int       @id @default(autoincrement())
-  slug      String    @unique
-  adminId   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  admin     User      @relation(fields: [adminId], references: [id])
-  chats     Chat[]
+  id            Int         @id @default(autoincrement())
+  slug          String      @unique
+  adminId       String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  admin         User        @relation("RoomAdmin", fields: [adminId], references: [id])
+  collaborators RoomUser[]
+  chats         Chat[]
+}
+
+model RoomUser {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  roomId    Int
+  role      Role     @default(viewer)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  room      Room     @relation(fields: [roomId], references: [id])
+
+  @@unique([userId, roomId])
+}
+
+enum Role {
+  admin
+  editor
+  viewer
 }
 
 model Chat {

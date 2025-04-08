@@ -15,16 +15,23 @@ interface Room {
   collaboratorsCount: number;
 }
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
 interface InviteModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   rooms: Room[];
-  onInvite: (roomId: string, email: string) => void;
+  users: User[];
+  onInvite: (roomId: string, userId: string) => void;
 }
 
-export const InviteModal = ({ isOpen, onOpenChange, rooms, onInvite }: InviteModalProps) => {
+export const InviteModal = ({ isOpen, onOpenChange, rooms, users, onInvite }: InviteModalProps) => {
   const [selectedRoom, setSelectedRoom] = useState<string>('');
-  const [inviteEmail, setInviteEmail] = useState<string>('');
+  const [selectedUser, setSelectedUser] = useState<string>('');
 
   const handleInvite = () => {
     if (!selectedRoom) {
@@ -32,13 +39,13 @@ export const InviteModal = ({ isOpen, onOpenChange, rooms, onInvite }: InviteMod
       return;
     }
 
-    if (!inviteEmail || !inviteEmail.includes('@')) {
-      toast.error('Please enter a valid email');
+    if (!selectedUser) {
+      toast.error('Please select a user');
       return;
     }
 
-    onInvite(selectedRoom, inviteEmail);
-    setInviteEmail('');
+    onInvite(selectedRoom, selectedUser);
+    setSelectedUser('');
     setSelectedRoom('');
     onOpenChange(false);
   };
@@ -69,15 +76,19 @@ export const InviteModal = ({ isOpen, onOpenChange, rooms, onInvite }: InviteMod
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="collaborator@example.com"
-              value={inviteEmail}
-              onChange={(e) => setInviteEmail(e.target.value)}
-              className="focus-visible:ring-violet-500"
-            />
+            <Label htmlFor="user">Select User</Label>
+            <Select value={selectedUser} onValueChange={setSelectedUser}>
+              <SelectTrigger id="user" className="w-full focus-visible:ring-violet-500">
+                <SelectValue placeholder="Select a user" />
+              </SelectTrigger>
+              <SelectContent>
+                {users.map((user) => (
+                  <SelectItem key={user.id} value={user.id}>
+                    {user.name} ({user.email})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <DialogFooter>
