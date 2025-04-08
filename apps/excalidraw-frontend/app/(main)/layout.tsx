@@ -52,18 +52,18 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     <SidebarProvider>
       <div className="flex h-screen w-full">
         <Sidebar>
-          <SidebarHeader className="border-b border-border/50 p-4">
-            <div className="flex items-center gap-2">
+          <SidebarHeader className="border-b border-border/50 p-5">
+            <div className="flex items-center gap-2 justify-center">
               <FileEdit className="h-6 w-6 text-purple-800 dark:text-purple-300" />
-              <span className="font-bold text-lg text-purple-800 dark:text-purple-300">Whiteboard</span>
+              <span className="font-extrabold tracking-wider text-lg text-purple-800 dark:text-purple-300">Whiteboard</span>
             </div>
           </SidebarHeader>
           
           <SidebarContent>
-            <SidebarMenu>
+            <SidebarMenu className=' flex flex-col justify-start h-full w-full gap-2 py-2 px-2'>
                 {menuItems.map((item) => (
                     <SidebarMenuItem key={item.label}>
-                    <SidebarMenuButton asChild onClick={() => setActive(item.label)} isActive={active === item.label} tooltip={item.label}>
+                    <SidebarMenuButton asChild onClick={() => setActive(item.label)} isActive={active === item.label} tooltip={item.label} className='data-[active=true]:bg-purple-500 data-[active=true]:text-purple-500 dark:data-[active=true]:bg-purple-300 dark:data-[active=true]:text-black'>
                         <Link href={item.href}>
                         <item.icon />
                         <span>{item.label}</span>
