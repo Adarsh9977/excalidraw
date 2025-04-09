@@ -22,7 +22,7 @@ export function Navbar () {
             <ThemeToggle />
           </div>
           
-          <Button>Get Started</Button>
+          <Button onClick={()=>{}}>Get Started</Button>
         </div>
       </div>
     </nav>
