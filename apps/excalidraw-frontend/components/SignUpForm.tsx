@@ -16,14 +16,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
+import axios from "axios";
+import { CreateUserSchema } from "@repo/common/types";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
-const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-});
-
-type FormData = z.infer<typeof formSchema>;
+type FormData = z.infer<typeof CreateUserSchema>;
 
 interface SignUpFormProps {
   onToggleForm: () => void;
@@ -32,16 +30,18 @@ interface SignUpFormProps {
 const SignUpForm = ({ onToggleForm }: SignUpFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const router =useRouter();
+  const { login, isAuthenticated, logout } = useAuth();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(CreateUserSchema),
     defaultValues: {
       name: "",
-      email: "",
+      username: "",
       password: "",
     },
   });
@@ -50,9 +50,20 @@ const SignUpForm = ({ onToggleForm }: SignUpFormProps) => {
     setIsLoading(true);
     try {
       // This is where you would handle registration
-      console.log("Sign up data:", data);
-      
-      toast.success("Account created successfully!");
+      const res = await axios.post("http://localhost:3001/signup", {
+          username: data.username,
+          password: data.password,
+          name: data.name
+      });
+      if(res.status !== 200){
+          toast.error("Registration failed. Please try again.");
+          return;
+      }
+      const token = res.data.token;
+      const userId = res.data.userId;
+      login(token, userId);
+      toast.success("Account created successfully!");      setIsLoading(false);
+      router.push("/dashboard");
       
       // Mock successful registration
       setTimeout(() => {
@@ -101,12 +112,12 @@ const SignUpForm = ({ onToggleForm }: SignUpFormProps) => {
               id="email"
               type="email"
               placeholder="name@example.com"
-              {...register("email")}
-              className={errors.email ? "border-red-500" : ""}
+              {...register("username")}
+              className={errors.username ? "border-red-500" : ""}
               disabled={isLoading}
             />
-            {errors.email && (
-              <p className="text-sm text-red-500">{errors.email.message}</p>
+            {errors.username && (
+              <p className="text-sm text-red-500">{errors.username.message}</p>
             )}
           </div>
           <div className="space-y-2">

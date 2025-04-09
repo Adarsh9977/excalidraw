@@ -1,15 +1,25 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 const AuthContainer = () => {
   const [isSignIn, setIsSignIn] = useState(true);
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
 
   const toggleForm = () => {
     setIsSignIn(!isSignIn);
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router]);
 
   return (
     <div className="w-full max-w-lg mx-auto">
