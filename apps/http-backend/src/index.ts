@@ -258,6 +258,7 @@ app.post('/invite/:userId', middleware, async(req, res) => {
 app.post('/join-room', middleware, async(req, res) => {
   const roomId = req.body.roomId;
   const userId = (req as any).userId;
+  const role = req.body.role;
   if(!roomId || !userId) {
     res.status(400).json({ error: 'Room ID and User ID are required' });
     return;
@@ -286,7 +287,7 @@ app.post('/join-room', middleware, async(req, res) => {
       data: {
         userId: user.id,
         roomId: room.id,
-        role: 'editor'
+        role: role
       }
     });
 
@@ -327,13 +328,22 @@ app.delete('/users/:userId', middleware, async(req, res) => {
 });
 
 app.put('/room/:userId', middleware, async(req, res) => {
-  const userId = req.params.userID;
+  const userId = req.params.userId;
   const roomId = req.body.roomId;
   const role = req.body.role;
-  if(!userId ||!roomId ||!role) {
-    res.status(400).json({ error: 'User ID and Room ID are required' });
+  if(!userId) {
+    res.status(400).json({ error: 'User ID is required' });
     return;
   }
+  if(!roomId) {
+    res.status(400).json({ error: 'Room ID is required' });
+    return;
+  }
+  if(!role) {
+    res.status(400).json({ error: 'Role is required' });
+    return;
+  }
+
   try {
     const user = await prismaClient.user.findUnique({
       where: { id: userId }
@@ -356,6 +366,56 @@ app.put('/room/:userId', middleware, async(req, res) => {
     res.status(200).json({ message: 'User updated successfully' });
   } catch (error) {
     res.status(400).json({ error: 'Error while updating user' }); 
+  }
+});
+
+app.get('/collaborators', middleware, async (req, res) => {
+  const userId = (req as any).userId;
+  try {
+    // First get all rooms where the user is admin
+    const rooms = await prismaClient.room.findMany({
+      where: {
+        adminId: userId
+      }
+    });
+
+    // Get all collaborators for these rooms
+    const collaborators = await prismaClient.roomUser.findMany({
+      where: {
+        roomId: {
+          in: rooms.map(room => room.id)
+        }
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        },
+        room: {
+          select: {
+            id: true,
+            slug: true
+          }
+        }
+      }
+    });
+
+    res.status(200).json({
+      collaborators: collaborators.map(collab => ({
+        userId: collab.user.id,
+        name: collab.user.name,
+        email: collab.user.email,
+        roomId: collab.room.id,
+        roomName: collab.room.slug,
+        role: collab.role
+      }))
+    });
+  } catch (error) {
+    console.error('Error fetching collaborators:', error);
+    res.status(400).json({ error: 'Error while fetching collaborators' });
   }
 });
 
