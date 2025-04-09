@@ -96,7 +96,7 @@ const StepItem = ({ number, title, description, isActive, isCompleted }: StepIte
 const HowItWorksSection = () => {
   // For demo purposes, let's say steps 1-2 are completed, step 3 is active
   return (
-    <section className="py-24 bg-gray-50 dark:bg-gradient-to-b dark:from-violet-900/90 dark:to-violet-900/50">
+    <section className="py-24 bg-gray-50 dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-700">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
