@@ -9,15 +9,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useState } from 'react';
+import { Collaborator } from '@/lib/api/users';
 
-interface Collaborator {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  room: string;
-  avatarUrl: string;
-}
 
 interface UserCardProps {
   collaborator: Collaborator;
@@ -28,7 +21,7 @@ export const UserCard = ({ collaborator }: UserCardProps) => {
   const [selectedRole, setSelectedRole] = useState(collaborator.role.toLowerCase());
 
   const copyInviteLink = () => {
-    const inviteLink = `https://example.com/invite/${collaborator.id}`;
+    const inviteLink = `https://example.com/invite/${collaborator.userId}`;
     navigator.clipboard.writeText(inviteLink);
     toast.success('Invite link copied to clipboard');
   };
@@ -40,7 +33,7 @@ export const UserCard = ({ collaborator }: UserCardProps) => {
   const handleUpdate = async () => {
     try {
       // This would be replaced with an actual API call
-      console.log('Changing role for', collaborator.id, 'to', selectedRole);
+      console.log('Changing role for', collaborator.userId, 'to', selectedRole);
       toast.success(`Updated ${collaborator.name}'s role to ${selectedRole}`);
     } catch (error) {
       toast.error('Failed to update role');
@@ -50,7 +43,7 @@ export const UserCard = ({ collaborator }: UserCardProps) => {
   const handleRemove = async () => {
     try {
       // This would be replaced with an actual API call
-      console.log('Removing user', collaborator.id);
+      console.log('Removing user', collaborator.name);
       toast.success(`Removed ${collaborator.name} from collaborators`);
     } catch (error) {
       toast.error('Failed to remove user');
@@ -69,11 +62,15 @@ export const UserCard = ({ collaborator }: UserCardProps) => {
       <Card className="h-full overflow-hidden border-violet-200 dark:border-violet-800 hover:border-violet-400 dark:hover:border-violet-500 transition-all py-0">
         <CardHeader className="bg-gradient-to-r from-violet-100 to-purple-100 dark:from-violet-900/40 dark:to-purple-900/30 flex flex-row items-center gap-4 p-4 sm:p-6">
           <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full overflow-hidden border-2 border-white dark:border-slate-800 shadow-md flex-shrink-0">
-            <img
-              src={collaborator.avatarUrl}
+            {collaborator.avatar ? <img
+              src={collaborator.avatar}
               alt={collaborator.name}
               className="h-full w-full object-cover"
-            />
+            /> : (
+              <div className="h-full w-full bg-slate-200 dark:bg-slate-800 rounded-full flex items-center justify-center">
+                {collaborator.name[0]}
+              </div>
+            )}
           </div>
           <div>
             <CardTitle className="text-base sm:text-lg text-violet-800 dark:text-violet-300">
@@ -90,7 +87,7 @@ export const UserCard = ({ collaborator }: UserCardProps) => {
           </div>
           <div className='flex items-center gap-2 text-xs sm:text-sm text-muted-foreground'>
             <Activity size={14} className="text-violet-500 flex-shrink-0" />
-            <span className="text-xs sm:text-sm">{collaborator.room}</span>
+            <span className="text-xs sm:text-sm">{collaborator.roomName}</span>
           </div>
         </CardContent>
 

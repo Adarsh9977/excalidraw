@@ -60,16 +60,10 @@ const SignUpForm = ({ onToggleForm }: SignUpFormProps) => {
           return;
       }
       const token = res.data.token;
-      const userId = res.data.userId;
+      const userId = res.data.user.id;
       login(token, userId);
       toast.success("Account created successfully!");      setIsLoading(false);
       router.push("/dashboard");
-      
-      // Mock successful registration
-      setTimeout(() => {
-        setIsLoading(false);
-        onToggleForm(); // Switch to login form after successful registration
-      }, 1500);
     } catch (error) {
       console.error("Registration error:", error);
       setIsLoading(false);

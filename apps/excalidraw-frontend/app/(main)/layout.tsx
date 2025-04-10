@@ -1,5 +1,6 @@
 'use client'
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from "next/link";
 import { 
   SidebarProvider,
@@ -22,6 +23,7 @@ import {
   Home
 } from "lucide-react";
 import { ThemeToggle } from '@/components/theme-toggle';
+import { useAuth } from '@/hooks/useAuth';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -46,7 +48,18 @@ const menuItems = [
 ]
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-    const [active, setActive] = useState<typeof menuItems[number]['label']>('Dashboard');
+  const [active, setActive] = useState<typeof menuItems[number]['label']>();
+  const { logout } = useAuth();
+  const pathname = usePathname();
+  const router = useRouter();
+
+
+  useEffect(() => {
+    const currentMenuItem = menuItems.find(item => pathname.startsWith(item.href));
+    if (currentMenuItem) {
+      setActive(currentMenuItem.label);
+    }
+  }, [pathname]);
 
   return (
     <SidebarProvider>
@@ -58,7 +71,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <span className="font-extrabold tracking-wider text-lg text-purple-800 dark:text-purple-300">Whiteboard</span>
             </div>
           </SidebarHeader>
-          
+
           <SidebarContent>
             <SidebarMenu className=' flex flex-col justify-start h-full w-full gap-2 py-2 px-2'>
                 {menuItems.map((item) => (
@@ -86,7 +99,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               </SidebarMenuItem>
               
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Logout">
+                <SidebarMenuButton asChild tooltip="Logout" onClick={()=>{
+                  logout();
+                  router.push('/signin');
+                }}>
                   <button>
                     <LogOut />
                     <span>Logout</span>
@@ -97,8 +113,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </SidebarFooter>
         </Sidebar>
         
-        <SidebarInset className="overflow-auto">
-          <div className="flex justify-end items-center p-4 border-b">
+        <SidebarInset className="overflow-auto hide-scrollbar">
+          <div className="sticky top-0 bg-sidebar/30 backdrop-blur flex justify-end items-center p-4 border-b">
             <div className="flex items-center gap-4">
               <ThemeToggle />
               <SidebarTrigger />

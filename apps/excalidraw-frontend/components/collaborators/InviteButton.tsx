@@ -5,20 +5,31 @@ import { UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { InviteModal } from '@/components/collaborators/InviteModal';
 import { toast } from 'sonner';
+import { Board } from '@/lib/api/boards';
+import { InviteUserToRoom, User } from '@/lib/api/users';
 
 interface InviteButtonProps {
-  rooms: Array<{ id: string; name: string; collaboratorsCount: number }>;
-  users: Array<{ id: string; name: string; email: string }>;
+  rooms: Board[];
+  users: User[];
 }
 
 export function InviteButton({ rooms, users }: InviteButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleInvite = async (roomId: string, userId: string) => {
+  const handleInvite = async (roomId: string, userId: string, role:string) => {
     // This would be replaced with an actual API call
     const user = users.find(u => u.id === userId);
-    console.log('Inviting user', userId, 'to room', roomId);
-    toast.success(`Invitation sent to ${user?.name}`);
+    if (!user) {
+      toast.error('User not found');
+      return;
+    }
+
+    const res = await InviteUserToRoom(userId, roomId, role);
+    if (res?.status === 200) {
+      toast.success(`Invitation sent to ${user?.name}`);
+    } else {
+      toast.error('Failed to send invitation');
+    }
   };
 
   return (

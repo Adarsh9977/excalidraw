@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Sparkles, Palette } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface BackgroundCircle {
   width: number;
@@ -11,7 +12,7 @@ interface BackgroundCircle {
   top: string;
 }
 
-const HeroSection = () => {
+const HeroSection = ({ token }: { token: string | undefined }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [backgroundCircles, setBackgroundCircles] = useState<BackgroundCircle[]>(
     [...Array(6)].map(() => ({
@@ -21,6 +22,7 @@ const HeroSection = () => {
       top: '0%'
     }))
   );
+  const router = useRouter();
 
   useEffect(() => {
     setBackgroundCircles(
@@ -72,10 +74,10 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <span className="inline-flex items-center gap-2 bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-100 px-3 py-1 rounded-full text-sm font-medium mb-4">
-                <Sparkles size={16} className="animate-pulse" />
-                Collaborative Drawing Made Simple
-              </span>
+                <span className="inline-flex items-center gap-2 bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-100 px-3 py-1 rounded-full text-sm font-medium mb-4">
+                  <Sparkles size={16} className="animate-pulse" />
+                  Collaborative Drawing Made Simple
+                </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900">
                 Sketch ideas together,{" "}
                 <span className="text-violet-600 dark:text-violet-900">beautifully</span>
@@ -97,6 +99,13 @@ const HeroSection = () => {
                 className="bg-violet-600 hover:bg-violet-700 text-white rounded-full"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
+                onClick={()=>{
+                  if(token){
+                    router.push('/dashboard');
+                  }else{
+                    router.push('/signin');
+                  }
+                }}
               >
                 Start Sketching
                 <motion.div

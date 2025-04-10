@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Board } from '@/lib/api/boards';
 
 interface Room {
   id: string;
@@ -24,14 +25,15 @@ interface User {
 interface InviteModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  rooms: Room[];
+  rooms: Board[];
   users: User[];
-  onInvite: (roomId: string, userId: string) => void;
+  onInvite: (roomId: string, userId: string, role: string) => void;
 }
 
 export const InviteModal = ({ isOpen, onOpenChange, rooms, users, onInvite }: InviteModalProps) => {
   const [selectedRoom, setSelectedRoom] = useState<string>('');
   const [selectedUser, setSelectedUser] = useState<string>('');
+  const [selectedRole, setSelectedRole] = useState<string>('viewer');
 
   const handleInvite = () => {
     if (!selectedRoom) {
@@ -44,9 +46,15 @@ export const InviteModal = ({ isOpen, onOpenChange, rooms, users, onInvite }: In
       return;
     }
 
-    onInvite(selectedRoom, selectedUser);
+    if (!selectedRole) {
+      toast.error('Please select a role');
+      return;
+    }
+
+    onInvite(selectedRoom, selectedUser, selectedRole);
     setSelectedUser('');
     setSelectedRoom('');
+    setSelectedRole('viewer');
     onOpenChange(false);
   };
 
@@ -67,9 +75,9 @@ export const InviteModal = ({ isOpen, onOpenChange, rooms, users, onInvite }: In
                 <SelectValue placeholder="Select a room" />
               </SelectTrigger>
               <SelectContent>
-                {rooms.map((room) => (
-                  <SelectItem key={room.id} value={room.id}>
-                    {room.name}
+                {rooms.map((room, index) => (
+                  <SelectItem key={index} value={room.id}>
+                    {room.slug}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -87,6 +95,19 @@ export const InviteModal = ({ isOpen, onOpenChange, rooms, users, onInvite }: In
                     {user.name} ({user.email})
                   </SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="role">Select Role</Label>
+            <Select value={selectedRole} onValueChange={setSelectedRole}>
+              <SelectTrigger id="role" className="w-full focus-visible:ring-violet-500">
+                <SelectValue placeholder="Select a role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="viewer">Viewer</SelectItem>
+                <SelectItem value="editor">Editor</SelectItem>
+                <SelectItem value="admin">Admin</SelectItem>
               </SelectContent>
             </Select>
           </div>

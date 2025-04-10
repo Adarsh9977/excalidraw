@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useEffect, useState } from "react";
 import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
@@ -9,17 +9,23 @@ import { useAuth } from "@/hooks/useAuth";
 const AuthContainer = () => {
   const [isSignIn, setIsSignIn] = useState(true);
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, userId } = useAuth();
 
   const toggleForm = () => {
     setIsSignIn(!isSignIn);
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
-      router.push("/dashboard");
+    if (isAuthenticated && userId) {
+      const pendingInvitation = localStorage.getItem('pendingInvitation');
+      if (pendingInvitation) {
+        localStorage.removeItem('pendingInvitation');
+        router.push(`/join/${pendingInvitation}`);
+      } else {
+        router.push("/dashboard");
+      }
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, userId, router]);
 
   return (
     <div className="w-full max-w-lg mx-auto">

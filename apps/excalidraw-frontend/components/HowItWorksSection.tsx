@@ -1,4 +1,4 @@
-
+'use client'
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -43,7 +43,7 @@ const StepItem = ({ number, title, description, isActive, isCompleted }: StepIte
     <motion.div
       className={cn(
         "relative pl-14 pb-8",
-        isCompleted ? "text-gray-600 dark:text-primary" : isActive ? "text-gray-900 dark:text-primary" : "text-gray-400 dark:text-primary"
+        isCompleted ? "text-gray-800 dark:text-primary" : isActive ? "text-gray-900 dark:text-primary" : "text-gray-800 dark:text-primary"
       )}
       initial={{ opacity: 0, x: -10 }}
       whileInView={{ opacity: 1, x: 0 }}
@@ -59,7 +59,7 @@ const StepItem = ({ number, title, description, isActive, isCompleted }: StepIte
               ? "bg-violet-600 border-violet-600 text-white"
               : isActive
               ? "border-violet-600 text-violet-600"
-              : "border-gray-300 text-gray-300"
+              : "border-gray-500 text-gray-500"
           )}
         >
           {isCompleted ? <Check className="h-5 w-5" /> : number}
@@ -71,7 +71,7 @@ const StepItem = ({ number, title, description, isActive, isCompleted }: StepIte
         <div
           className={cn(
             "absolute left-5 top-10 w-0.5 h-full -ml-px",
-            isCompleted ? "bg-violet-600" : "bg-gray-200"
+            isCompleted ? "bg-violet-600" : "bg-gray-400"
           )}
         />
       )}
@@ -79,13 +79,13 @@ const StepItem = ({ number, title, description, isActive, isCompleted }: StepIte
       {/* Step content */}
       <h3 className={cn(
         "text-xl font-bold mb-2",
-        isCompleted || isActive ? "" : "text-gray-400 dark:text-primary"
+        isCompleted || isActive ? "" : "text-gray-700 dark:text-primary"
       )}>
         {title}
       </h3>
       <p className={cn(
         "text-base",
-        isCompleted ? "text-gray-600 dark:text-primary" : isActive ? "text-gray-600 dark:text-primary" : "text-gray-400 dark:text-primary"
+        isCompleted ? "text-gray-600 dark:text-primary" : isActive ? "text-gray-600 dark:text-primary" : "text-gray-500 dark:text-primary"
       )}>
         {description}
       </p>
