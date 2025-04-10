@@ -553,3 +553,21 @@ app.get('/collaborators', middleware, async (req, res) => {
   }
 });
 
+app.get('/chats/:roomId', async (req, res) => {
+  const roomId = Number(req.params.roomId);
+  if(!roomId) {
+    res.status(400).json({ error: 'Room ID is required' });
+    return;
+  }
+  try {
+    const chats = await prismaClient.chat.findMany({
+      where: {
+        roomId: roomId
+      }
+    });
+    res.status(200).json({ chats})
+  }catch (error) {
+    res.status(400).json({ error: 'Error while fetching chats' });
+  }
+});
+
