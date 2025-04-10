@@ -1,3 +1,4 @@
+import { color } from "framer-motion";
 import { getExistingShapes } from "./http";
 
 type Shape = {
@@ -6,11 +7,15 @@ type Shape = {
     y: number;
     width: number;
     height: number;
+    color?: string;
+    strokeWidth?: number;
 } | {
     type: 'circle';
     centerX: number;
     centerY: number;
     radius: number;
+    color?: string;
+    strokeWidth?: number;
 } | {
     type: 'triangle';
     x1: number;
@@ -19,8 +24,27 @@ type Shape = {
     y2: number;
     x3: number;
     y3: number;
-} | undefined;
-
+    color?: string;
+    strokeWidth?: number;
+} | {
+    type: 'pencil';
+    points: { x: number; y: number }[];
+    color?: string;
+    strokeWidth?: number;
+} | {
+    type: 'text';
+    text: string;
+    textX: number;
+    textY: number;
+    fontSize: number;
+    color?: string;
+    strokeWidth?: number;
+} | {
+    type: 'eraser';
+    points: { x: number; y: number }[];
+    strokeWidth?: number;
+    color?: string;
+};
 
 export class Game {
     private canvas: HTMLCanvasElement;
@@ -31,7 +55,13 @@ export class Game {
     private startX : number;
     private startY : number;
     private clicked: boolean;
-    private selectedShape: 'circle' | 'rectangle' | 'triangle' = 'circle';
+    private selectedShape: 'circle' | 'rectangle' | 'triangle' | 'pencil' | 'text' | 'eraser' = 'circle';
+    private selectedTool: 'pencil' | 'text' = 'pencil';
+    private isDrawing: boolean = false;
+    private currentPath: {x: number, y: number}[] = [];
+    private currentColor: string = 'crimson';
+    private currentStrokeWidth: number = 2;
+    private fontSize: number = 16;
     private theme: string | undefined;
 
     constructor(canvas: HTMLCanvasElement, roomId: string, socket : WebSocket, theme: string | undefined) {
@@ -43,9 +73,18 @@ export class Game {
         this.startX = 0;
         this.startY = 0;
         this.clicked = false;
+        this.isDrawing = false;
+        this.currentPath = [{x: 0, y: 0}];
+        this.currentColor = 'crimson';
+        this.currentStrokeWidth = 2;
+        this.fontSize = 16;
         this.init();
         this.initHandler();
         this.initMouseHandles();
+        this.setColor('crimson');
+        this.setStrokeWidth(2);
+        this.selectedShape = 'circle';
+        
     }
 
     destroy() {
@@ -54,7 +93,7 @@ export class Game {
         this.canvas.removeEventListener("mousemove", this.mouseMoveHandler);
     }
 
-    setSelectedShape(shape: 'circle' | 'rectangle' | 'triangle') {
+    setSelectedShape(shape: 'circle' | 'rectangle' | 'triangle' | 'pencil' | 'text') {
         this.selectedShape = shape;
     }
 
@@ -81,20 +120,53 @@ export class Game {
         this.ctx?.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.existingShapes.map((shape) => {
-            this.ctx.strokeStyle = "crimson";
-            if(shape?.type === 'rect'){
-                this.ctx?.strokeRect(shape.x, shape.y, shape.width, shape.height);
-            } else if(shape?.type === 'circle'){
-                this.ctx?.beginPath();
-                this.ctx?.arc(shape.centerX, shape.centerY, shape.radius, 0, 2 * Math.PI);
-                this.ctx?.stroke();
-            } else if(shape?.type === 'triangle'){
-                this.ctx?.beginPath();
-                this.ctx?.moveTo(shape.x1, shape.y1);
-                this.ctx?.lineTo(shape.x2, shape.y2);
-                this.ctx?.lineTo(shape.x3, shape.y3);
-                this.ctx?.closePath();
-                this.ctx?.stroke();
+            if (shape?.type === 'eraser' && shape.points) {
+                this.ctx.globalCompositeOperation = 'destination-out';
+                this.ctx.beginPath();
+                this.ctx.strokeStyle = shape.color || 'crimson';
+                this.ctx.lineWidth = shape.strokeWidth || 20;
+                this.ctx.moveTo(shape.points[0].x, shape.points[0].y);
+                shape.points.forEach(point => {
+                this.ctx.lineTo(point.x, point.y);
+                });
+                this.ctx.stroke();
+                this.ctx.globalCompositeOperation = 'source-over';
+            } else {
+                this.ctx.lineWidth = shape?.strokeWidth || 2;
+
+                if (shape?.type === 'pencil' && shape.points) {
+                    this.ctx.beginPath();
+                    this.ctx.strokeStyle = shape.color || 'crimson';
+                    this.ctx.moveTo(shape.points[0].x, shape.points[0].y);
+                    shape.points.forEach(point => {
+                        this.ctx.lineTo(point.x, point.y);
+                    });
+                    this.ctx.stroke();
+                } else if (shape?.type === 'text' && shape.text) {
+                    this.ctx.font = `${shape.fontSize}px Arial`;
+                    this.ctx.fillStyle = shape.color || 'crimson';
+                    this.ctx.fillText(shape.text, shape.textX!, shape.textY!);
+                } else {
+                    if(shape?.type === 'rect'){
+                        this.ctx.strokeStyle = shape.color || 'crimson';
+                        this.ctx?.strokeRect(shape.x, shape.y, shape.width, shape.height);
+                    } else if(shape?.type === 'circle'){
+                        this.ctx?.beginPath();
+                        this.ctx.strokeStyle = shape.color || 'crimson';
+                        this.ctx.lineWidth = shape.strokeWidth || 2;
+                        this.ctx?.arc(shape.centerX, shape.centerY, shape.radius, 0, 2 * Math.PI);
+                        this.ctx?.stroke();
+                    } else if(shape?.type === 'triangle'){
+                        this.ctx?.beginPath();
+                        this.ctx.strokeStyle = shape.color || 'crimson';
+                        this.ctx.lineWidth = shape.strokeWidth || 2;
+                        this.ctx?.moveTo(shape.x1, shape.y1);
+                        this.ctx?.lineTo(shape.x2, shape.y2);
+                        this.ctx?.lineTo(shape.x3, shape.y3);
+                        this.ctx?.closePath();
+                        this.ctx?.stroke();
+                    }
+                }
             }
         });
     }
@@ -103,6 +175,7 @@ export class Game {
         this.clicked = false;
         const currentX = e.clientX;
         const currentY = e.clientY;
+        console.log("CLICKED", this.currentColor);
 
         let shape: Shape | null = null;
         if (this.selectedShape === 'rectangle') {
@@ -112,6 +185,8 @@ export class Game {
                 y: this.startY,
                 width: currentX - this.startX,
                 height: currentY - this.startY,
+                strokeWidth: this.currentStrokeWidth,
+                color: this.currentColor
             };
         } else if (this.selectedShape === 'circle') {
             const radius = Math.sqrt(
@@ -124,6 +199,8 @@ export class Game {
                 centerX,
                 centerY,
                 radius,
+                strokeWidth: this.currentStrokeWidth,
+                color: this.currentColor
             };
         } else if (this.selectedShape === 'triangle') {
             const midX = (this.startX + currentX) / 2;
@@ -137,9 +214,51 @@ export class Game {
                 x2: currentX,
                 y2: currentY,
                 x3: thirdX,
-                y3: thirdY
+                y3: thirdY,
+                strokeWidth: this.currentStrokeWidth,
+                color: this.currentColor
+            };
+        }else if (this.selectedShape === 'pencil') {
+            const point = { x: e.clientX, y: e.clientY };
+            this.currentPath.push(point);
+            shape = {
+                type: 'pencil',
+                points: this.currentPath,
+                strokeWidth: this.currentStrokeWidth,
+                color: this.currentColor
+            };
+        }else if (this.selectedShape === 'text') {
+            const text = prompt('Enter text:');
+            if (text) {
+                const shape = {
+                    type: 'text',
+                    text,
+                    textX: this.startX,
+                    textY: this.startY,
+                    fontSize: this.fontSize,
+                    color: this.currentColor,
+                    strokeWidth: this.currentStrokeWidth
+                };
+                this.existingShapes.push(shape as Shape);
+                this.socket.send(JSON.stringify({
+                    type: 'chat',
+                    message: JSON.stringify(shape),
+                    roomId: this.roomId
+                }));
+                this.clearCanvas();
+            }
+        }else if(this.selectedShape === 'eraser'){
+            const point = { x: e.clientX, y: e.clientY };
+            this.currentPath.push(point);
+            shape = {
+                type: "eraser",
+                points: this.currentPath,
+                strokeWidth: this.currentStrokeWidth,
+                color: this.theme === undefined ? 'white' : this.theme === 'dark' ? 'black' : 'white',
             };
         }
+
+
         if(!shape) {
             return;
         }
@@ -160,22 +279,52 @@ export class Game {
         this.clicked = true;
         this.startX = e.clientX;
         this.startY = e.clientY;
+
+        if (this.selectedShape === 'pencil') {
+            this.clicked = true;
+            this.currentPath = [{ x: this.startX, y: this.startY }];
+        } else if (this.selectedShape === 'text') {
+            const text = prompt('Enter text:');
+            if (text) {
+                const shape = {
+                    type: 'text',
+                    text,
+                    textX: this.startX,
+                    textY: this.startY,
+                    fontSize: this.fontSize,
+                    color: this.currentColor,
+                    strokeWidth: this.currentStrokeWidth
+                };
+                this.existingShapes.push(shape as Shape);
+                this.socket.send(JSON.stringify({
+                    type: 'chat',
+                    message: JSON.stringify(shape),
+                    roomId: this.roomId
+                }));
+                this.clearCanvas();
+            }
+        }else if(this.selectedShape === 'eraser'){
+            this.clicked = true;
+            this.currentPath = [{ x: this.startX, y: this.startY }];
+        }
     }
 
     mouseMoveHandler = (e: MouseEvent) => {
-        if(this.clicked) {
+        if (this.clicked) {
             const currentX = e.clientX;
             const currentY = e.clientY;
 
             this.clearCanvas();
-            this.ctx.strokeStyle = 'crimson';
             const selectedShape = this.selectedShape;
             console.log("SELECTED SHAPE", selectedShape);
 
             if (selectedShape === 'rectangle') {
                 const width = currentX - this.startX;
                 const height = currentY - this.startY;
+                this.ctx.strokeStyle = this.currentColor;
+                this.ctx.lineWidth = this.currentStrokeWidth;
                 this.ctx.strokeRect(this.startX, this.startY, width, height);
+
             } else if (selectedShape === 'circle') {
                 const radius = Math.sqrt(
                     Math.pow(currentX - this.startX, 2) + Math.pow(currentY - this.startY, 2)
@@ -183,20 +332,51 @@ export class Game {
                 const centerX = this.startX + (currentX - this.startX) / 2;
                 const centerY = this.startY + (currentY - this.startY) / 2;
                 this.ctx.beginPath();
+                this.ctx.lineWidth = this.currentStrokeWidth;
+                this.ctx.strokeStyle = this.currentColor;
                 this.ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
                 this.ctx.stroke();
-            } else {
+            }else if(selectedShape === 'pencil'){
+                const point = { x: e.clientX, y: e.clientY };
+                this.currentPath.push(point);
+    
+                this.clearCanvas();
+                this.ctx.beginPath();
+                this.ctx.lineWidth = this.currentStrokeWidth;
+                this.ctx.strokeStyle = this.currentColor;
+                this.ctx.moveTo(this.currentPath[0].x, this.currentPath[0].y);
+                this.currentPath.forEach(point => {
+                    this.ctx.lineTo(point.x, point.y);
+                });
+                this.ctx.stroke();
+            }else if(selectedShape === 'triangle'){
                 const midX = (this.startX + currentX) / 2;
                 const midY = (this.startY + currentY) / 2;
                 const thirdX = midX + (midY - this.startY);
                 const thirdY = midY - (midX - this.startX);
 
                 this.ctx.beginPath();
+                this.ctx.strokeStyle = this.currentColor;
+                this.ctx.lineWidth = this.currentStrokeWidth;
                 this.ctx.moveTo(this.startX, this.startY);
                 this.ctx.lineTo(currentX, currentY);
                 this.ctx.lineTo(thirdX, thirdY);
                 this.ctx.closePath();
                 this.ctx.stroke();
+            }else if(selectedShape === 'eraser'){
+                const point = { x: e.clientX, y: e.clientY };
+                this.currentPath.push(point);
+
+                this.clearCanvas();
+                this.ctx.globalCompositeOperation = 'destination-out';
+                this.ctx.beginPath();
+                this.ctx.lineWidth = this.currentStrokeWidth;
+                this.ctx.moveTo(this.currentPath[0].x, this.currentPath[0].y);
+                this.currentPath.forEach(point => {
+                    this.ctx.lineTo(point.x, point.y);
+                });
+                this.ctx.stroke();
+                this.ctx.globalCompositeOperation = 'source-over';
             }
         }
     }
@@ -209,4 +389,17 @@ export class Game {
         this.canvas.addEventListener("mousemove", this.mouseMoveHandler);
     
     }
+
+    setColor(color: string) {
+        this.currentColor = color;
+    }
+
+    setStrokeWidth(width: number) {
+        this.currentStrokeWidth = width;
+    }
+
+    setFontSize(size: number) {
+        this.fontSize = size;
+    }
+
 }
