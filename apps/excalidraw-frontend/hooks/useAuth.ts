@@ -22,17 +22,8 @@ export const useAuth = () => {
   }, []);
 
   const login = (token: string, userId: string) => {
-    // Set cookies with expiry (e.g., 7 days)
-    Cookies.set('auth_token', token, { 
-      expires: 7,
-      secure: true,
-      sameSite: 'strict'
-    });
-    Cookies.set('user_id', userId, { 
-      expires: 7,
-      secure: true,
-      sameSite: 'strict'
-    });
+    document.cookie = `auth_token=${token}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=lax`;
+    document.cookie = `user_id=${userId}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=lax`;
     setAuth({ token, userId });
   };
 
