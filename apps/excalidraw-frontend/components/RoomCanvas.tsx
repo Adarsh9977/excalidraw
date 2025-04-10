@@ -2,12 +2,13 @@
 import { WS_URL } from "@/config";
 import { Canvas } from "@/components/Canvas";
 import { useEffect, useState } from "react"
+import { useAuth } from "@/hooks/useAuth";
 
-export function RoomCanvas({ roomId }: { roomId: string }) {
+export function RoomCanvas({ roomId, token }: { roomId: string, token : string | undefined }) {
     const [ socket, setSocket ] = useState<WebSocket | null>(null);
 
     useEffect(() => {
-        const ws = new WebSocket(`${WS_URL}?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmYzQxZWI4MS0zZjE0LTQ0ZDUtYjIzNi01MDY1NjNmMTY5MWMiLCJpYXQiOjE3NDQwMTIwMDB9.JXe8B71NZkOra5ZR8GLq8SUWvTxoau8N4CXlWr2QPFQ`);
+        const ws = new WebSocket(`${WS_URL}?token=${token}`);
 
         ws.onopen = () => {
             setSocket(ws);

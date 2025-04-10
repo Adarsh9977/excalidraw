@@ -205,6 +205,7 @@ export const DashboardClient = ({ initialBoards }: DashboardClientProps) => {
                     size="sm"
                     variant="ghost"
                     className="text-violet-600 hover:text-violet-800 hover:bg-violet-100 dark:text-violet-400 dark:hover:text-violet-300 dark:hover:bg-violet-900/50"
+                    onClick={() => router.push(`/canvas/${board.id}`)}
                   >
                     <Pencil size={14} className="mr-1" /> Open
                   </Button>
