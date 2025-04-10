@@ -11,18 +11,18 @@ export default async function Home() {
   const token = await getAuthToken();
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex flex-col min-h-screen bg-white hide-scrollbar">
       {/* <BackgroundElements /> */}
       <Navbar token={token} />
-      
-      <main>
+
+      <main className="hide-scrollbar">
         <HeroSection token={token} />
         <FeaturesSection />
         <HowItWorksSection />
         <TestimonialsSection />
         <CTASection />
       </main>
-      
+
       <Footer />
     </div>
   );
