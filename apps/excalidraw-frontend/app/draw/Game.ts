@@ -56,8 +56,6 @@ export class Game {
     private startY : number;
     private clicked: boolean;
     private selectedShape: 'circle' | 'rectangle' | 'triangle' | 'pencil' | 'text' | 'eraser' = 'circle';
-    private selectedTool: 'pencil' | 'text' = 'pencil';
-    private isDrawing: boolean = false;
     private currentPath: {x: number, y: number}[] = [];
     private currentColor: string = 'crimson';
     private currentStrokeWidth: number = 2;
@@ -73,7 +71,6 @@ export class Game {
         this.startX = 0;
         this.startY = 0;
         this.clicked = false;
-        this.isDrawing = false;
         this.currentPath = [{x: 0, y: 0}];
         this.currentColor = 'crimson';
         this.currentStrokeWidth = 2;
@@ -123,7 +120,7 @@ export class Game {
             if (shape?.type === 'eraser' && shape.points) {
                 this.ctx.globalCompositeOperation = 'destination-out';
                 this.ctx.beginPath();
-                this.ctx.strokeStyle = shape.color || 'crimson';
+                this.ctx.strokeStyle = this.theme === undefined ? 'white' : this.theme === 'dark' ? 'black' : 'white';;
                 this.ctx.lineWidth = shape.strokeWidth || 20;
                 this.ctx.moveTo(shape.points[0].x, shape.points[0].y);
                 shape.points.forEach(point => {
@@ -175,7 +172,6 @@ export class Game {
         this.clicked = false;
         const currentX = e.clientX;
         const currentY = e.clientY;
-        console.log("CLICKED", this.currentColor);
 
         let shape: Shape | null = null;
         if (this.selectedShape === 'rectangle') {
@@ -253,7 +249,7 @@ export class Game {
             shape = {
                 type: "eraser",
                 points: this.currentPath,
-                strokeWidth: this.currentStrokeWidth,
+                strokeWidth: this.currentStrokeWidth * 2.5,
                 color: this.theme === undefined ? 'white' : this.theme === 'dark' ? 'black' : 'white',
             };
         }
@@ -368,15 +364,28 @@ export class Game {
                 this.currentPath.push(point);
 
                 this.clearCanvas();
+
+                // Eraser effect first
                 this.ctx.globalCompositeOperation = 'destination-out';
                 this.ctx.beginPath();
-                this.ctx.lineWidth = this.currentStrokeWidth;
+                this.ctx.lineWidth = this.currentStrokeWidth * 2;
                 this.ctx.moveTo(this.currentPath[0].x, this.currentPath[0].y);
                 this.currentPath.forEach(point => {
                     this.ctx.lineTo(point.x, point.y);
                 });
                 this.ctx.stroke();
                 this.ctx.globalCompositeOperation = 'source-over';
+                
+                // Draw cursor on top
+                this.ctx.save();
+                this.ctx.beginPath();
+                this.ctx.arc(e.clientX, e.clientY, this.currentStrokeWidth, 0, Math.PI * 2);
+                this.ctx.strokeStyle = this.theme === 'dark' ? 'white' : 'black';
+                this.ctx.lineWidth = 2;
+                this.ctx.stroke();
+                this.ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                this.ctx.fill();
+                this.ctx.restore();
             }
         }
     }

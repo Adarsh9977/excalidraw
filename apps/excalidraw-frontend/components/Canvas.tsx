@@ -49,7 +49,7 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
         <div className="h-[100vh] w-[100vw] overflow-hidden">
             <div className="fixed top-10 left-10 p-4 z-50">
                 <div className="flex flex-col gap-4">
-                    <div className="flex gap-4 bg-background/80 backdrop-blur-sm p-2 rounded-lg shadow-lg">
+                    <div className="flex gap-4 bg-background backdrop-blur-sm p-2 rounded-lg shadow-lg">
                         <IconButton 
                             selectedShape={selectedShape === 'circle'} 
                             onClick={() => setSelectedShape('circle')} 
@@ -78,7 +78,7 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
                         <IconButton 
                             selectedShape={selectedShape === 'eraser'} 
                             onClick={() => setSelectedShape('eraser')} 
-                            icon={<Eraser className="w-4 h-4"/>}
+                            icon={<Eraser/>}
                         />
                     </div>
 
@@ -104,7 +104,7 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
                                 value={[strokeWidth]}
                                 onValueChange={([value]: number[]) => setStrokeWidth(value)}
                                 min={1}
-                                max={20}
+                                max={25}
                                 step={1}
                             />
                         </div>
@@ -112,8 +112,8 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
                 </div>
             </div>
             <canvas 
-                className="fixed" 
-                ref={canvasRef} 
+                className={`fixed ${theme === 'dark' ? 'bg-black' : 'bg-white'}`}
+                ref={canvasRef}
                 width={window.innerWidth} 
                 height={window.innerHeight}
             />
