@@ -1,13 +1,13 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '@repo/backend-common/config';
-import { middleware, config } from './midleware';
+import { middleware } from './midleware';
 import { CreateRoomSchema, CreateUserSchema, SigninSchema } from '@repo/common/types';
 import { prismaClient } from '@repo/db/client';
 import bcrypt from 'bcryptjs';
 import cors from 'cors';
 import nodemailer from 'nodemailer';
-import { EMAIL_USER, EMAIL_PASSWORD } from './config';
+import { EMAIL_USER, EMAIL_PASSWORD, FRONTEND_URL } from './config';
 
 const app = express();
 
@@ -44,7 +44,7 @@ app.post('/signup', async (req, res) => {
       },
     });
     const token = jwt.sign({ userId: user.id }, JWT_SECRET);
-    res.json({
+    res.status(200).json({
       user: {
         id: user.id,
         email: user.email,
@@ -79,7 +79,7 @@ app.post('/signin', async(req, res) => {
     return;
   }
   const token = jwt.sign({ userId: existingUser.id }, JWT_SECRET);
-  res.json({
+  res.status(200).json({
     user: {
       id: existingUser.id,
       email: existingUser.email,
@@ -104,33 +104,90 @@ app.post('/room', middleware, async(req, res) => {
         adminId: userId,
       },
     });
-    res.json({ roomId: room.id });
+    res.status(200).json({ room: room });
     return;
   } catch (error) {
     res.status(400).json({ error: 'Room already exists' });
   }
 });
 
-app.get('/rooms', async (req, res)=>{
+app.get('/rooms', middleware, async (req, res) => {
   const userId = (req as any).userId;
   try {
-    const rooms = await prismaClient.room.findMany({
+    // Get rooms where user is admin
+    const adminRooms = await prismaClient.room.findMany({
       where: {
         adminId: userId
+      },
+      include: {
+        collaborators: true
       }
     });
 
+    // Get rooms where user is a collaborator
+    const collaboratorRooms = await prismaClient.room.findMany({
+      where: {
+        collaborators: {
+          some: {
+            userId: userId
+          }
+        }
+      },
+      include: {
+        collaborators: true
+      }
+    });
+
+    // Combine both sets of rooms
+    const allRooms = [...adminRooms, ...collaboratorRooms];
+
     res.status(200).json({
-      rooms
+      rooms: allRooms
     });
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: 'Error while getting rooms' });
   }
-})
+});
 
-app.get('/users', async (req, res)=>{
+app.get('/myrooms', middleware, async(req, res) => {
+    const userId = (req as any).userId;
+    try {
+      // Get rooms where user is admin
+      const adminRooms = await prismaClient.room.findMany({
+        where: {
+          adminId: userId
+        },
+        include: {
+          collaborators: true
+        }
+      });
+
+      res.status(200).json({
+        rooms: adminRooms
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({ error: 'Error while getting rooms' });
+    }
+  });
+
+app.get('/users',middleware, async (req, res)=>{
+  const userId = (req as any).userId;
   try {
-    const users = await prismaClient.user.findMany();
+    const users = await prismaClient.user.findMany({
+      where: {
+        id : {
+          not: userId
+        }
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        avatar: true
+      }
+    });
 
     res.status(200).json({
       users
@@ -155,13 +212,13 @@ app.delete('/rooms/:roomId',middleware, async(req, res) => {
   try {
     const room = await prismaClient.room.delete({
       where: {
-        id: roomId,
+        id: Number(roomId),
         adminId: userId
       }
     });
-    res.status(200).json({ message: 'Room deleted successfully' });
+    res.status(200).json({status:200, message: 'Room deleted successfully' });
   } catch (error) {
-    res.status(400).json({ error: 'Error while deleting room' });
+    res.status(400).json({ status: 400, error: error });
   }
 })
 
@@ -176,7 +233,7 @@ app.get('/room/:slug', async(req, res) => {
       where: { slug }
     });
 
-    res.json({
+    res.status(200).json({
       room
     });
   } catch (error) {
@@ -187,14 +244,14 @@ app.get('/room/:slug', async(req, res) => {
 app.post('/invite/:userId', middleware, async(req, res) => {
   const targetUserId = String(req.params.userId);
   const roomId = req.body.roomId;
+  const role = req.body.role;
 
-  if (!targetUserId || !roomId) {
+  if (!targetUserId || !roomId || !role) {
     res.status(400).json({ error: 'User ID and Room ID are required' });
     return;
-  } 
+  }
 
   try {
-    // Find the target user
     const targetUser = await prismaClient.user.findUnique({
       where: { id: targetUserId }
     });
@@ -204,7 +261,6 @@ app.post('/invite/:userId', middleware, async(req, res) => {
       return;
     }
 
-    // Find the room
     const room = await prismaClient.room.findUnique({
       where: { id: parseInt(roomId) },
       include: { admin: true },
@@ -215,9 +271,29 @@ app.post('/invite/:userId', middleware, async(req, res) => {
       return;
     }
 
-    // Send invitation email
+    const existingMembership = await prismaClient.roomUser.findUnique({
+      where: {
+        userId_roomId: {
+          userId: targetUserId,
+          roomId: room.id
+        }
+      }
+    })
+
+    if(existingMembership) {
+      res.status(400).json({status:400, error: 'User is already a member of this room' });
+    }
+
+    // Generate invitation token
+    const inviteToken = jwt.sign(
+      { userId: targetUserId, roomId: room.id, role: role },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    // Send invitation email with the new token
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: EMAIL_USER,
       to: targetUser.email,
       subject: 'Invitation to Join Room',
       html: `
@@ -233,10 +309,10 @@ app.post('/invite/:userId', middleware, async(req, res) => {
               <p><strong>Room:</strong> ${room.slug}</p>
               <p style="margin-top: 20px;">Click the button below to join the room:</p>
               <div style="text-align: center; margin: 30px 0;">
-                <a href="${process.env.FRONTEND_URL}/room/${room.slug}" style="background-color: #6c5ce7; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-size: 16px;">Join Room</a>
+                <a href="${FRONTEND_URL}/join/${inviteToken}" style="background-color: #6c5ce7; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-size: 16px;">Join Room</a>
               </div>
               <p>If the button doesn't work, copy and paste this URL into your browser:</p>
-              <p style="word-break: break-word;">${process.env.FRONTEND_URL}/room/${room.slug}</p>
+              <p style="word-break: break-word;">${FRONTEND_URL}/join/${inviteToken}</p>
             </div>
             <div style="background-color: #f1effa; text-align: center; padding: 15px; font-size: 13px; color: #888;">
               &copy; ${new Date().getFullYear()} WhiteBoard. All rights reserved.
@@ -247,30 +323,87 @@ app.post('/invite/:userId', middleware, async(req, res) => {
     };
 
     await transporter.sendMail(mailOptions);
-
-    res.status(200).json({ message: 'Invitation sent successfully' });
+    res.status(200).json({ status:200, message: 'Invitation sent successfully' });
   } catch (error) {
     console.error('Error sending invitation:', error);
     res.status(500).json({ error: 'Failed to send invitation' });
   }
 });
 
-app.post('/join-room', middleware, async(req, res) => {
+// Add new endpoint to verify invitation token
+app.get('/verify-invite/:token', async(req:any, res:any) => {
+  const { token } = req.params;
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; roomId: number, role: string };
+    console.log(decoded)
+    const room = await prismaClient.room.findUnique({
+      where: { id: decoded.roomId },
+      select: {
+        id: true,
+        slug: true,
+        adminId: true
+      }
+    });
+
+    if (!room) {
+      return res.status(404).json({ error: 'Room not found' });
+    }
+
+    const user = await prismaClient.user.findUnique({
+      where: { id: decoded.userId },
+      select: {
+        id: true,
+        name: true,
+        email: true
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({
+      valid: true,
+      token,
+      room,
+      user,
+      role: decoded.role
+    });
+  } catch (error) {
+    res.status(400).json({ valid: false, error: 'Invalid or expired invitation link' });
+  }
+});
+
+app.post('/join-room', async(req:any, res:any) => {
   const roomId = req.body.roomId;
-  const userId = (req as any).userId;
+  const userId = req.body.userId;
   const role = req.body.role;
   if(!roomId || !userId) {
     res.status(400).json({ error: 'Room ID and User ID are required' });
     return;
   }
   try {
+    const existingMembership = await prismaClient.roomUser.findUnique({
+      where: {
+        userId_roomId: {
+          userId: userId,
+          roomId: Number(roomId)
+        }
+      }
+    });
+
+    if (existingMembership) {
+      return res.status(400).json({ error: 'User is already a member of this room' });
+    }
+
     const room = await prismaClient.room.findUnique({
-      where: { id: roomId },
+      where: { id: Number(roomId) },
       include: { admin: true },
     });
 
     if (!room) {
-      res.status(404).json({ error: 'Room not found' });
+      res.status(404).json({status:400, error: 'Room not found' });
       return;
     }
 
@@ -279,21 +412,21 @@ app.post('/join-room', middleware, async(req, res) => {
     });
 
     if (!user) {
-      res.status(404).json({ error: 'User not found' });
+      res.status(404).json({status:400, error: 'User not found' });
       return;
     }
-
-    await prismaClient.roomUser.create({
+    const mainRoom = await prismaClient.roomUser.create({
       data: {
         userId: user.id,
         roomId: room.id,
-        role: role
+        role: role,
+        avatar: user.avatar
       }
     });
 
-    res.status(200).json({ message: 'Joined room successfully' });
+    res.status(200).json({status:200, message: 'Joined room successfully' });
   } catch (error) {
-    res.status(400).json({ error: 'Error while joining room' });
+    res.status(400).json({ error: error });
   }
 });
 
@@ -318,7 +451,7 @@ app.delete('/users/:userId', middleware, async(req, res) => {
     await prismaClient.roomUser.deleteMany({
       where: {
         userId: user.id,
-        roomId: roomId
+        roomId: Number(roomId)
       }
     });
     res.status(200).json({ message: 'User deleted successfully' });
@@ -391,7 +524,8 @@ app.get('/collaborators', middleware, async (req, res) => {
           select: {
             id: true,
             name: true,
-            email: true
+            email: true,
+            avatar: true
           }
         },
         room: {
