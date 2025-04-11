@@ -46,19 +46,19 @@ export default async function CollaboratorsPage() {
             <p className="text-muted-foreground mt-1">Manage your team and invite new members</p>
           </div>
 
-          <InviteButton rooms={rooms} users={users} />
+          <InviteButton rooms={rooms.data} users={users.data} />
         </header>
 
         <Suspense fallback={<CollaboratorsLoading />}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {collaborators.length>0 && collaborators.map((collaborator, index) => (
+            {collaborators.data.length>0 && collaborators.data.map((collaborator, index) => (
               <UserCard
                 key={index}
                 collaborator={collaborator}
               />
             ))}
           </div>
-          {collaborators.length === 0 && (
+          {collaborators.data.length === 0 && (
               <div className="flex flex-col items-center justify-center gap-2 w-full py-24">
                 <p className="text-violet-800 font-bold text-2xl">No collaborators yet</p>
                 <p className="text-muted-foreground text-xl">Invite your teammates to join</p>

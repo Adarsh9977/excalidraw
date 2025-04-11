@@ -24,6 +24,7 @@ export const DashboardClient = ({ initialBoards }: DashboardClientProps) => {
   const [newBoardName, setNewBoardName] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [boardToDelete, setBoardToDelete] = useState<string | null>(null);
+  const [createBoardLoading, setCreateBoardLoading ] = useState(false);
   const router = useRouter();
   const { userId, isAuthenticated } = useAuth();
 
@@ -40,16 +41,35 @@ export const DashboardClient = ({ initialBoards }: DashboardClientProps) => {
   }, [isAuthenticated, userId, router]);
   
   const createNewBoard = async () => {
+    setCreateBoardLoading(true);
     if (!newBoardName.trim()) {
       toast.error('Please enter a board name');
+      setCreateBoardLoading(false);
       return;
     }
-    const newBoard = await createBoard(newBoardName);
+    if(boards.find(board => board.slug === newBoardName.trim())){
+      toast.error('Board name already exists');
+      setCreateBoardLoading(false);
+      return;
+    }
 
-    setBoards([...boards, newBoard]);
-    setNewBoardName('');
-    setIsDialogOpen(false);
-    toast.success('New board created successfully!');
+    try {
+      const newBoard = await createBoard(newBoardName);
+      console.log(newBoard);
+
+      if(newBoard?.status === 200){
+        setCreateBoardLoading(false);
+        setBoards([...boards, newBoard.data]);
+        setNewBoardName('');
+        setIsDialogOpen(false);
+        toast.success('New board created successfully!');
+      }
+    } catch (error) {
+      setCreateBoardLoading(false);
+      setNewBoardName('');
+      toast.error(`${error}`);
+    }
+
   };
 
   const deleteBoard =async (boardId: string) => {
@@ -103,8 +123,8 @@ export const DashboardClient = ({ initialBoards }: DashboardClientProps) => {
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={createNewBoard} className="bg-violet-600 hover:bg-violet-700 text-white">
-                Create Board
+              <Button disabled={createBoardLoading} onClick={createNewBoard} className="bg-violet-600 hover:bg-violet-700 text-white">
+                { createBoardLoading ? 'Creating...' : 'Create Board' }
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -131,7 +151,7 @@ export const DashboardClient = ({ initialBoards }: DashboardClientProps) => {
             </CardContent>
           </Card>
         </motion.div>
-        
+
         {/* Existing boards */}
         {boards.map((board: Board, index) => (
           <motion.div 

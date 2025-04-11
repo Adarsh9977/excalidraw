@@ -72,13 +72,13 @@ const TestimonialsSection = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.5 }}
-              className="bg-white rounded-xl p-8 md:p-12 shadow-lg border border-gray-100"
+              className="bg-white dark:bg-accent rounded-xl p-8 md:p-12 shadow-lg border border-gray-100 dark:border-accent/10"
             >
               <div className="text-violet-500 mb-6">
                 <Quote size={40} />
               </div>
               
-              <p className="text-xl md:text-2xl text-gray-700 italic mb-8">
+              <p className="text-xl md:text-2xl text-gray-700 dark:text-primary italic mb-8">
                 "{testimonials[currentIndex].content}"
               </p>
               
@@ -91,8 +91,8 @@ const TestimonialsSection = () => {
                   />
                 </div>
                 <div>
-                  <p className="font-bold text-gray-900">{testimonials[currentIndex].author}</p>
-                  <p className="text-gray-600">{testimonials[currentIndex].role}</p>
+                  <p className="font-bold text-gray-900 dark:text-violet-400">{testimonials[currentIndex].author}</p>
+                  <p className="text-gray-600 dark:text-gray-400">{testimonials[currentIndex].role}</p>
                 </div>
               </div>
             </motion.div>

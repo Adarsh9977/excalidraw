@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { HTTP_BACKEND } from '@/config';
 import { getAuthToken } from '@/lib/auth';
+import { Exo } from 'next/font/google';
 
 export interface Board {
   id: string;
@@ -26,7 +27,7 @@ export interface DeleteBoardResponse{
 }
 
 
-export async function getBoards(): Promise<Board[]> {
+export async function getBoards(): Promise<{status: Number, data: Board[]}> {
   try {
     const token = await getAuthToken();
     if (!token) {
@@ -38,14 +39,14 @@ export async function getBoards(): Promise<Board[]> {
         'Authorization': `${token}`
       }
     });
-    return response.data.rooms;
+    return {status:response.status, data: response.data.rooms};
   } catch (error) {
     console.error('Error fetching boards:', error);
-    return [];
+    return {status:400, data: []};
   }
 }
 
-export async function getMyBoards(): Promise<Board[]> {
+export async function getMyBoards(): Promise<{status: Number, data: Board[]}> {
   try {
     const token = await getAuthToken();
     if (!token) {
@@ -57,14 +58,14 @@ export async function getMyBoards(): Promise<Board[]> {
         'Authorization': `${token}`
       }
     });
-    return response.data.rooms;
+    return {status:response.status, data: response.data.rooms};
   } catch (error) {
     console.error('Error fetching boards:', error);
-    return [];
+    return {status:400, data: []};
   }
 }
 
-export async function createBoard(name: string): Promise<Board> {
+export async function createBoard(name: string): Promise<{status: Number, data: Board} | undefined> {
   try {
     const token = await getAuthToken();
     if (!token) {
@@ -78,20 +79,23 @@ export async function createBoard(name: string): Promise<Board> {
         'Authorization': `${token}`
       }
     });
-    return response.data.room;
+    return {status:response.status, data: response.data.room};
   } catch (error) {
     console.error('Error creating board:', error);
     return {
-      id: '',
-      slug: '',
-      createdAt: '',
-      updatedAt: '',
-      collaborators: [],
+      status: 400,
+      data: {
+        id: '',
+        slug: '',
+        createdAt: '',
+        updatedAt: '',
+        collaborators: [],
+    }
     };
   }
 }
 
-export async function deleteBoardById(boardId: string): Promise<DeleteBoardResponse | undefined> {
+export async function deleteBoardById(boardId: string): Promise<{status: Number, data: DeleteBoardResponse | undefined}> {
   try {
     const token = await getAuthToken();
     if (!token) {
@@ -103,8 +107,9 @@ export async function deleteBoardById(boardId: string): Promise<DeleteBoardRespo
         'Authorization': `${token}`
       }
     });
-    return res.data;
+    return {status:res.status, data: res.data};
   } catch (error) {
     console.error('Error deleting board:', error);
+    return {status:400, data: undefined};
   }
 }

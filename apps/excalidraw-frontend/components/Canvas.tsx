@@ -11,7 +11,7 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
     const { theme } = useTheme();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [game, setGame] = useState<Game>();
-    const [selectedShape, setSelectedShape] = useState<'circle' | 'rectangle' | 'triangle' | 'pencil' | 'text' | 'eraser' | null>(null);
+    const [selectedShape, setSelectedShape] = useState<'circle' | 'rectangle' | 'triangle' | 'pencil' | 'eraser' | null>(null);
     const [strokeWidth, setStrokeWidth] = useState(2);
     const [color, setColor] = useState('crimson');
 
@@ -69,11 +69,6 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
                             selectedShape={selectedShape === 'pencil'} 
                             onClick={() => setSelectedShape('pencil')} 
                             icon={<Pencil/>}
-                        />
-                        <IconButton 
-                            selectedShape={selectedShape === 'text'} 
-                            onClick={() => setSelectedShape('text')} 
-                            icon={<Type/>}
                         />
                         <IconButton 
                             selectedShape={selectedShape === 'eraser'} 

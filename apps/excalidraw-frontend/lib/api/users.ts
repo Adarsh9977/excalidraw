@@ -19,12 +19,7 @@ export interface Collaborator {
     avatar?: string
 }
 
-interface InviteUserToRoomResponse {
-    status: number;
-    message: string;
-}
-
-export async function getUsers(): Promise<User[]> {
+export async function getUsers(): Promise<{status: Number, data: User[]}> {
     try {
         const token  = await getAuthToken();
         if (!token) {
@@ -35,14 +30,14 @@ export async function getUsers(): Promise<User[]> {
                 'Authorization': `${token}`
             }
         });
-        return res.data.users;
+        return {status:res.status, data: res.data.users};
     } catch (error) {
         console.error('Error fetching users:', error);
-        return [];
+        return {status:400, data: []};
     }
 }
 
-export async function getCollaborators(): Promise<Collaborator[]> {
+export async function getCollaborators(): Promise<{status: Number, data: Collaborator[]}> {
     try {
         const token = await getAuthToken();
         const res = await axios.get(`${HTTP_BACKEND}/collaborators`,{
@@ -50,14 +45,14 @@ export async function getCollaborators(): Promise<Collaborator[]> {
                 'Authorization': `${token}`
             }
         });
-        return res.data.collaborators;
+        return {status:res.status, data: res.data.collaborators};
     } catch (error) {
         console.error('Error fetching collaborators:', error);
-        return [];
+        return {status:400, data: []};
     }
 }
 
-export async function InviteUserToRoom(userId: string, roomId: string, role: string): Promise<InviteUserToRoomResponse | undefined> {
+export async function InviteUserToRoom(userId: string, roomId: string, role: string): Promise<{status: Number, message: any}> {
     try {
         const token = await getAuthToken();
         const res = await axios.post(`${HTTP_BACKEND}/invite/${userId}`, {
@@ -69,8 +64,9 @@ export async function InviteUserToRoom(userId: string, roomId: string, role: str
             }
         }
     );
-        return res.data;
+        return {status:res.status, message: res.data};
     } catch (error) {
         console.error('Error inviting user to room:', error);
+        return {status:400, message: error};
     }
 }

@@ -7,13 +7,18 @@ type Shape = {
     y: number;
     width: number;
     height: number;
+    radius: number;
     color?: string;
     strokeWidth?: number;
 } | {
     type: 'circle';
     centerX: number;
     centerY: number;
-    radius: number;
+    radiusX: number;
+    radiusY: number;
+    rotation: number;
+    startAngle: number;
+    endAngle: number;
     color?: string;
     strokeWidth?: number;
 } | {
@@ -55,11 +60,10 @@ export class Game {
     private startX : number;
     private startY : number;
     private clicked: boolean;
-    private selectedShape: 'circle' | 'rectangle' | 'triangle' | 'pencil' | 'text' | 'eraser' = 'circle';
+    private selectedShape: 'circle' | 'rectangle' | 'triangle' | 'pencil' | 'eraser' = 'circle';
     private currentPath: {x: number, y: number}[] = [];
     private currentColor: string = 'crimson';
     private currentStrokeWidth: number = 2;
-    private fontSize: number = 16;
     private theme: string | undefined;
 
     constructor(canvas: HTMLCanvasElement, roomId: string, socket : WebSocket, theme: string | undefined) {
@@ -74,7 +78,6 @@ export class Game {
         this.currentPath = [{x: 0, y: 0}];
         this.currentColor = 'crimson';
         this.currentStrokeWidth = 2;
-        this.fontSize = 16;
         this.init();
         this.initHandler();
         this.initMouseHandles();
@@ -90,7 +93,7 @@ export class Game {
         this.canvas.removeEventListener("mousemove", this.mouseMoveHandler);
     }
 
-    setSelectedShape(shape: 'circle' | 'rectangle' | 'triangle' | 'pencil' | 'text') {
+    setSelectedShape(shape: 'circle' | 'rectangle' | 'triangle' | 'pencil' | 'eraser') {
         this.selectedShape = shape;
     }
 
@@ -121,7 +124,7 @@ export class Game {
                 this.ctx.globalCompositeOperation = 'destination-out';
                 this.ctx.beginPath();
                 this.ctx.strokeStyle = this.theme === undefined ? 'white' : this.theme === 'dark' ? 'black' : 'white';;
-                this.ctx.lineWidth = shape.strokeWidth || 20;
+                this.ctx.lineWidth = (shape.strokeWidth ? shape.strokeWidth * 1 : 20);
                 this.ctx.moveTo(shape.points[0].x, shape.points[0].y);
                 shape.points.forEach(point => {
                 this.ctx.lineTo(point.x, point.y);
@@ -139,19 +142,27 @@ export class Game {
                         this.ctx.lineTo(point.x, point.y);
                     });
                     this.ctx.stroke();
-                } else if (shape?.type === 'text' && shape.text) {
-                    this.ctx.font = `${shape.fontSize}px Arial`;
-                    this.ctx.fillStyle = shape.color || 'crimson';
-                    this.ctx.fillText(shape.text, shape.textX!, shape.textY!);
-                } else {
+                }else {
                     if(shape?.type === 'rect'){
                         this.ctx.strokeStyle = shape.color || 'crimson';
-                        this.ctx?.strokeRect(shape.x, shape.y, shape.width, shape.height);
+                        this.ctx.beginPath();
+                        this.ctx.strokeStyle = this.currentColor;
+                        this.ctx.lineWidth = shape.strokeWidth || 2;
+                        this.ctx.moveTo(shape.x + shape.radius, shape.y);
+                        this.ctx.lineTo(shape.x + shape.width - shape.radius, shape.y);
+                        this.ctx.quadraticCurveTo(shape.x + shape.width, shape.y, shape.x + shape.width, shape.y + shape.radius);
+                        this.ctx.lineTo(shape.x + shape.width, shape.y + shape.height - shape.radius);
+                        this.ctx.quadraticCurveTo(shape.x + shape.width, shape.y + shape.height, shape.x + shape.width - shape.radius, shape.y + shape.height);
+                        this.ctx.lineTo(shape.x + shape.radius, shape.y + shape.height);
+                        this.ctx.quadraticCurveTo(shape.x, shape.y + shape.height, shape.x, shape.y + shape.height - shape.radius);
+                        this.ctx.lineTo(shape.x, shape.y + shape.radius);
+                        this.ctx.quadraticCurveTo(shape.x, shape.y, shape.x + shape.radius, shape.y);
+                        this.ctx.stroke();
                     } else if(shape?.type === 'circle'){
                         this.ctx?.beginPath();
                         this.ctx.strokeStyle = shape.color || 'crimson';
                         this.ctx.lineWidth = shape.strokeWidth || 2;
-                        this.ctx?.arc(shape.centerX, shape.centerY, shape.radius, 0, 2 * Math.PI);
+                        this.ctx?.ellipse(shape.centerX, shape.centerY, shape.radiusX, shape.radiusY, shape.rotation, shape.startAngle, shape.endAngle);
                         this.ctx?.stroke();
                     } else if(shape?.type === 'triangle'){
                         this.ctx?.beginPath();
@@ -175,29 +186,42 @@ export class Game {
 
         let shape: Shape | null = null;
         if (this.selectedShape === 'rectangle') {
-            shape = {
+            const x = Math.min(this.startX, currentX);
+            const y = Math.min(this.startY, currentY);
+            const width = Math.abs(currentX - this.startX);
+            const height = Math.abs(currentY - this.startY);
+            const radius = Math.min(10, width / 2, height / 2);
+
+            shape ={
                 type: 'rect',
-                x: this.startX,
-                y: this.startY,
-                width: currentX - this.startX,
-                height: currentY - this.startY,
-                strokeWidth: this.currentStrokeWidth,
-                color: this.currentColor
-            };
-        } else if (this.selectedShape === 'circle') {
-            const radius = Math.sqrt(
-                Math.pow(currentX - this.startX, 2) + Math.pow(currentY - this.startY, 2)
-            ) / 2;
-            const centerX = this.startX + (currentX - this.startX) / 2;
-            const centerY = this.startY + (currentY - this.startY) / 2;
-            shape = {
-                type: 'circle',
-                centerX,
-                centerY,
+                x,
+                y,
+                width,
+                height,
                 radius,
                 strokeWidth: this.currentStrokeWidth,
                 color: this.currentColor
-            };
+            }
+        } else if (this.selectedShape === 'circle') {
+                const radiusX = Math.abs(currentX - this.startX) / 2;
+                const radiusY = Math.abs(currentY - this.startY) / 2;
+                const centerX = (this.startX + currentX) / 2;
+                const centerY = (this.startY + currentY) / 2;
+                const rotation = 0;
+                const startAngle = 0;
+                const endAngle = 2 * Math.PI;
+                shape = {
+                    type: 'circle',
+                    centerX,
+                    centerY,
+                    radiusX,
+                    radiusY,
+                    rotation,
+                    startAngle,
+                    endAngle,
+                    strokeWidth: this.currentStrokeWidth,
+                    color: this.currentColor
+                };
         } else if (this.selectedShape === 'triangle') {
             const midX = (this.startX + currentX) / 2;
             const midY = (this.startY + currentY) / 2;
@@ -223,26 +247,6 @@ export class Game {
                 strokeWidth: this.currentStrokeWidth,
                 color: this.currentColor
             };
-        }else if (this.selectedShape === 'text') {
-            const text = prompt('Enter text:');
-            if (text) {
-                const shape = {
-                    type: 'text',
-                    text,
-                    textX: this.startX,
-                    textY: this.startY,
-                    fontSize: this.fontSize,
-                    color: this.currentColor,
-                    strokeWidth: this.currentStrokeWidth
-                };
-                this.existingShapes.push(shape as Shape);
-                this.socket.send(JSON.stringify({
-                    type: 'chat',
-                    message: JSON.stringify(shape),
-                    roomId: this.roomId
-                }));
-                this.clearCanvas();
-            }
         }else if(this.selectedShape === 'eraser'){
             const point = { x: e.clientX, y: e.clientY };
             this.currentPath.push(point);
@@ -279,27 +283,7 @@ export class Game {
         if (this.selectedShape === 'pencil') {
             this.clicked = true;
             this.currentPath = [{ x: this.startX, y: this.startY }];
-        } else if (this.selectedShape === 'text') {
-            const text = prompt('Enter text:');
-            if (text) {
-                const shape = {
-                    type: 'text',
-                    text,
-                    textX: this.startX,
-                    textY: this.startY,
-                    fontSize: this.fontSize,
-                    color: this.currentColor,
-                    strokeWidth: this.currentStrokeWidth
-                };
-                this.existingShapes.push(shape as Shape);
-                this.socket.send(JSON.stringify({
-                    type: 'chat',
-                    message: JSON.stringify(shape),
-                    roomId: this.roomId
-                }));
-                this.clearCanvas();
-            }
-        }else if(this.selectedShape === 'eraser'){
+        } else if(this.selectedShape === 'eraser'){
             this.clicked = true;
             this.currentPath = [{ x: this.startX, y: this.startY }];
         }
@@ -315,22 +299,38 @@ export class Game {
             console.log("SELECTED SHAPE", selectedShape);
 
             if (selectedShape === 'rectangle') {
-                const width = currentX - this.startX;
-                const height = currentY - this.startY;
+                const x = Math.min(this.startX, currentX);
+                const y = Math.min(this.startY, currentY);
+                const width = Math.abs(currentX - this.startX);
+                const height = Math.abs(currentY - this.startY);
+                const radius = Math.min(10, width / 2, height / 2);
+                this.ctx.beginPath();
                 this.ctx.strokeStyle = this.currentColor;
                 this.ctx.lineWidth = this.currentStrokeWidth;
-                this.ctx.strokeRect(this.startX, this.startY, width, height);
+                this.ctx.moveTo(x + radius, y);
+                this.ctx.lineTo(x + width - radius, y);
+                this.ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+                this.ctx.lineTo(x + width, y + height - radius);
+                this.ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                this.ctx.lineTo(x + radius, y + height);
+                this.ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+                this.ctx.lineTo(x, y + radius);
+                this.ctx.quadraticCurveTo(x, y, x + radius, y);
+                this.ctx.stroke();
 
             } else if (selectedShape === 'circle') {
-                const radius = Math.sqrt(
-                    Math.pow(currentX - this.startX, 2) + Math.pow(currentY - this.startY, 2)
-                ) / 2;
-                const centerX = this.startX + (currentX - this.startX) / 2;
-                const centerY = this.startY + (currentY - this.startY) / 2;
+
                 this.ctx.beginPath();
-                this.ctx.lineWidth = this.currentStrokeWidth;
                 this.ctx.strokeStyle = this.currentColor;
-                this.ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                this.ctx.lineWidth = this.currentStrokeWidth;
+                const radiusX = Math.abs(currentX - this.startX) / 2;
+                const radiusY = Math.abs(currentY - this.startY) / 2;
+                const centerX = (this.startX + currentX) / 2;
+                const centerY = (this.startY + currentY) / 2;
+                const rotation = 0;
+                const startAngle = 0;
+                const endAngle = 2 * Math.PI;
+                this.ctx.ellipse(centerX, centerY, radiusX, radiusY, rotation, startAngle, endAngle * 2);
                 this.ctx.stroke();
             }else if(selectedShape === 'pencil'){
                 const point = { x: e.clientX, y: e.clientY };
@@ -405,10 +405,6 @@ export class Game {
 
     setStrokeWidth(width: number) {
         this.currentStrokeWidth = width;
-    }
-
-    setFontSize(size: number) {
-        this.fontSize = size;
     }
 
 }
