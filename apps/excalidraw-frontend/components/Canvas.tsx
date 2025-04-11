@@ -95,92 +95,12 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
                     </PopoverContent>
                 </Popover>
             </div>
-            {/* <div className="fixed top-3 p-4 z-50">
-                <div className="flex flex-col gap-4">
-                    <div className="flex gap-4 bg-background backdrop-blur-sm p-2 rounded-lg shadow-lg">
-                        <IconButton 
-                            selectedShape={selectedShape === 'circle'} 
-                            onClick={() => setSelectedShape('circle')} 
-                            icon={<Circle/>}
-                        />
-                        <IconButton 
-                            selectedShape={selectedShape === 'rectangle'} 
-                            onClick={() => setSelectedShape('rectangle')} 
-                            icon={<RectangleHorizontal/>}
-                        />
-                        <IconButton 
-                            selectedShape={selectedShape === 'triangle'} 
-                            onClick={() => setSelectedShape('triangle')} 
-                            icon={<Triangle/>}
-                        />
-                        <IconButton 
-                            selectedShape={selectedShape === 'pencil'} 
-                            onClick={() => setSelectedShape('pencil')} 
-                            icon={<Pencil/>}
-                        />
-                        <IconButton 
-                            selectedShape={selectedShape === 'eraser'} 
-                            onClick={() => setSelectedShape('eraser')} 
-                            icon={<Eraser/>}
-                        />
-                    </div>
-                </div>
-            </div> */}
             <DraggableShapeToolbar selectedShape={selectedShape} setSelectedShape={setSelectedShape} />
-            {/* {selectedShape && <div className="fixed top-50 px-1 left-2 z-50">
-                <div className="flex flex-col h-60 gap-4 bg-primary/20 backdrop-blur-xl p-2 rounded-lg shadow-lg">
-                <div className="grid grid-cols-2 gap-4 bg-transparent backdrop-blur-sm p-2 rounded-lg shadow-lg">
-                    <div className="w-8 h-8 rounded-md flex items-center justify-center">
-                        <div onClick={()=>{
-                            setColor('#99ffcc')
-                        }} className={`w-6 h-6 rounded ${color === '#99ffcc' ? 'border-2 border-black' : ''}`} style={{ backgroundColor: '#99ffcc' }} />
-                    </div>
-                    <div className="w-8 h-8 rounded-md flex items-center justify-center">
-                        <div onClick={()=>{
-                            setColor('#b380ff')
-                        }} className={`w-6 h-6 rounded ${color === '#b380ff' ? 'border-2 border-black' : ''}`} style={{ backgroundColor: '#b380ff' }} />
-                    </div>
-                    <div className="w-8 h-8 rounded-md flex items-center justify-center">
-                        <div onClick={()=>{
-                            setColor('#994d00')
-                        }} className={`w-6 h-6 rounded ${color === '#994d00' ? 'border-2 border-black' : ''}`} style={{ backgroundColor: '#994d00' }} />
-                    </div>
-                    <div className="w-8 h-8 rounded-md flex items-center justify-center">
-                        <div onClick={()=>{
-                            setColor('#ffff1a')
-                        }} className={`w-6 h-6 rounded ${color === '#ffff1a' ? 'border-2 border-black' : ''}`} style={{ backgroundColor: '#ffff1a' }} />
-                    </div>
-                    <div className="w-8 h-8 rounded-md flex items-center justify-center">
-                        <div onClick={()=>{
-                            setColor('#0066ff')
-                        }} className={`w-6 h-6 rounded ${color === '#0066ff' ? 'border-2 border-black' : ''}`} style={{ backgroundColor: '#0066ff' }} />
-                    </div>
-                    <div>
-                        <input
-                            type="color"
-                            value={color}
-                            onChange={(e) => setColor(e.target.value)}
-                            className="w-full h-8"
-                        />
-                    </div>
-                </div>
-                <div className="px-2">
-                    <Slider
-                        className="h-1 w-full bg-gradient-to-r from-[1px] via-gray-500 to-[25px]"
-                        value={[strokeWidth]}
-                        onValueChange={([value]: number[]) => setStrokeWidth(value)}
-                        min={1}
-                        max={25}
-                        step={1}
-                    />
-                </div>
-                </div>
-            </div>} */}
             {selectedShape && <DraggableSettingsPanel color={color} setColor={setColor} strokeWidth={strokeWidth} setStrokeWidth={setStrokeWidth} />}
-            <canvas 
+            <canvas
                 className={`fixed ${theme === 'dark' ? 'bg-black' : 'bg-white'}`}
                 ref={canvasRef}
-                width={window.innerWidth} 
+                width={window.innerWidth}
                 height={window.innerHeight}
             />
         </div>
