@@ -104,7 +104,7 @@ app.post('/room', middleware, async(req, res) => {
         adminId: userId,
       },
     });
-    res.status(200).json({ room: room });
+    res.status(200).json({ status: 200, room: room });
     return;
   } catch (error) {
     res.status(400).json({ error: 'Room already exists' });
@@ -142,6 +142,7 @@ app.get('/rooms', middleware, async (req, res) => {
     const allRooms = [...adminRooms, ...collaboratorRooms];
 
     res.status(200).json({
+      status:200,
       rooms: allRooms
     });
   } catch (error) {
@@ -164,6 +165,7 @@ app.get('/myrooms', middleware, async(req, res) => {
       });
 
       res.status(200).json({
+        status: 200,
         rooms: adminRooms
       });
     } catch (error) {
@@ -190,6 +192,7 @@ app.get('/users',middleware, async (req, res)=>{
     });
 
     res.status(200).json({
+      status:200,
       users
     });
   } catch (error) {
@@ -216,7 +219,7 @@ app.delete('/rooms/:roomId',middleware, async(req, res) => {
         adminId: userId
       }
     });
-    res.status(200).json({status:200, message: 'Room deleted successfully' });
+    res.status(200).json({ status:200, message: 'Room deleted successfully' });
   } catch (error) {
     res.status(400).json({ status: 400, error: error });
   }
@@ -234,6 +237,7 @@ app.get('/room/:slug', async(req, res) => {
     });
 
     res.status(200).json({
+      status: 200,
       room
     });
   } catch (error) {
@@ -281,7 +285,7 @@ app.post('/invite/:userId', middleware, async(req, res) => {
     })
 
     if(existingMembership) {
-      res.status(400).json({status:400, error: 'User is already a member of this room' });
+      res.status(400).json({ status:400, error: 'User is already a member of this room' });
     }
 
     // Generate invitation token
@@ -364,6 +368,7 @@ app.get('/verify-invite/:token', async(req:any, res:any) => {
     }
 
     res.status(200).json({
+      status:200,
       valid: true,
       token,
       room,
@@ -424,7 +429,7 @@ app.post('/join-room', async(req:any, res:any) => {
       }
     });
 
-    res.status(200).json({status:200, message: 'Joined room successfully' });
+    res.status(200).json({ status:200, message: 'Joined room successfully' });
   } catch (error) {
     res.status(400).json({ error: error });
   }
@@ -454,7 +459,7 @@ app.delete('/users/:userId', middleware, async(req, res) => {
         roomId: Number(roomId)
       }
     });
-    res.status(200).json({ message: 'User deleted successfully' });
+    res.status(200).json({ status:200, message: 'User deleted successfully' });
   } catch (error) {
     res.status(400).json({ error: "Error while deleting user" });
   }
@@ -465,15 +470,15 @@ app.put('/room/:userId', middleware, async(req, res) => {
   const roomId = req.body.roomId;
   const role = req.body.role;
   if(!userId) {
-    res.status(400).json({ error: 'User ID is required' });
+    res.status(400).json({ status: 400, error: 'User ID is required' });
     return;
   }
   if(!roomId) {
-    res.status(400).json({ error: 'Room ID is required' });
+    res.status(400).json({ status:400, error: 'Room ID is required' });
     return;
   }
   if(!role) {
-    res.status(400).json({ error: 'Role is required' });
+    res.status(400).json({ status: 400, error: 'Role is required' });
     return;
   }
 
@@ -482,7 +487,7 @@ app.put('/room/:userId', middleware, async(req, res) => {
       where: { id: userId }
     });
     if (!user) {
-      res.status(404).json({ error: 'User not found' });
+      res.status(404).json({ status: 400, error: 'User not found' });
       return;
     }
     await prismaClient.roomUser.update({
@@ -496,9 +501,9 @@ app.put('/room/:userId', middleware, async(req, res) => {
         role: role
       }
     });
-    res.status(200).json({ message: 'User updated successfully' });
+    res.status(200).json({ status:200, message: 'User updated successfully' });
   } catch (error) {
-    res.status(400).json({ error: 'Error while updating user' }); 
+    res.status(400).json({status: 400, error: 'Error while updating user' }); 
   }
 });
 
@@ -538,6 +543,7 @@ app.get('/collaborators', middleware, async (req, res) => {
     });
 
     res.status(200).json({
+      status:200,
       collaborators: collaborators.map(collab => ({
         userId: collab.user.id,
         name: collab.user.name,
@@ -549,7 +555,7 @@ app.get('/collaborators', middleware, async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching collaborators:', error);
-    res.status(400).json({ error: 'Error while fetching collaborators' });
+    res.status(400).json({ status : 400, error: 'Error while fetching collaborators' });
   }
 });
 
@@ -565,9 +571,9 @@ app.get('/chats/:roomId', async (req, res) => {
         roomId: roomId
       }
     });
-    res.status(200).json({ chats})
+    res.status(200).json({ status:200, chats})
   }catch (error) {
-    res.status(400).json({ error: 'Error while fetching chats' });
+    res.status(400).json({ status: 400, error: 'Error while fetching chats' });
   }
 });
 
