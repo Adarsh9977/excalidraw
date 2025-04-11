@@ -60,7 +60,7 @@ export class Game {
     private startX : number;
     private startY : number;
     private clicked: boolean;
-    private selectedShape: 'circle' | 'rectangle' | 'triangle' | 'pencil' | 'eraser' = 'circle';
+    private selectedShape: 'circle' | 'rectangle' | 'triangle' | 'pencil' | 'eraser' | null = null;
     private currentPath: {x: number, y: number}[] = [];
     private currentColor: string = 'crimson';
     private currentStrokeWidth: number = 2;
@@ -83,8 +83,7 @@ export class Game {
         this.initMouseHandles();
         this.setColor('crimson');
         this.setStrokeWidth(2);
-        this.selectedShape = 'circle';
-        
+        this.selectedShape = null;
     }
 
     destroy() {
@@ -144,9 +143,8 @@ export class Game {
                     this.ctx.stroke();
                 }else {
                     if(shape?.type === 'rect'){
-                        this.ctx.strokeStyle = shape.color || 'crimson';
                         this.ctx.beginPath();
-                        this.ctx.strokeStyle = this.currentColor;
+                        this.ctx.strokeStyle = shape.color || '#dc143c';
                         this.ctx.lineWidth = shape.strokeWidth || 2;
                         this.ctx.moveTo(shape.x + shape.radius, shape.y);
                         this.ctx.lineTo(shape.x + shape.width - shape.radius, shape.y);

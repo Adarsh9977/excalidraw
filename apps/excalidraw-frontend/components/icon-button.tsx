@@ -10,7 +10,7 @@ const IconButton = ({
     selectedShape: boolean
 }) => {
   return (
-    <div className={`pointer rounded-2xl border border-primary p-2 text-primary ${selectedShape ? 'bg-primary/30 text-primary' : 'bg-transparent'}`} onClick={onClick}>
+    <div className={`pointer  cursor-pointer rounded-2xl border border-primary p-2 text-primary ${selectedShape ? 'bg-primary text-white dark:text-black border-black' : 'bg-transparent'}`} onClick={onClick}>
       {icon}
     </div>
   )
