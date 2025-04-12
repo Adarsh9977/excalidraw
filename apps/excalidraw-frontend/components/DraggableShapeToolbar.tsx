@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { Circle, RectangleHorizontal, Triangle, Pencil, Eraser } from "lucide-react";
+import { Circle, RectangleHorizontal, Triangle, Pencil, Eraser, ArrowDownRight } from "lucide-react";
 import IconButton from "./icon-button";
 
 export default function DraggableShapeToolbar({
@@ -76,6 +76,11 @@ export default function DraggableShapeToolbar({
             selectedShape={selectedShape === "pencil"}
             onClick={() => setSelectedShape("pencil")}
             icon={<Pencil />}
+          />
+          <IconButton
+            selectedShape={selectedShape === "arrow"}
+            onClick={() => setSelectedShape("arrow")}
+            icon={<ArrowDownRight />}
           />
           <IconButton
             selectedShape={selectedShape === "eraser"}

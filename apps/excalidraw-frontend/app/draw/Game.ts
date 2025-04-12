@@ -49,6 +49,14 @@ type Shape = {
     points: { x: number; y: number }[];
     strokeWidth?: number;
     color?: string;
+} | {
+    type: 'arrow';
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+    color?: string;
+    strokeWidth?: number;
 };
 
 export class Game {
@@ -60,7 +68,7 @@ export class Game {
     private startX : number;
     private startY : number;
     private clicked: boolean;
-    private selectedShape: 'circle' | 'rectangle' | 'triangle' | 'pencil' | 'eraser' | null = null;
+    private selectedShape: 'circle' | 'rectangle' | 'triangle' | 'pencil' | 'eraser' | 'arrow' | null = null;
     private currentPath: {x: number, y: number}[] = [];
     private currentColor: string = 'crimson';
     private currentStrokeWidth: number = 2;
@@ -92,7 +100,7 @@ export class Game {
         this.canvas.removeEventListener("mousemove", this.mouseMoveHandler);
     }
 
-    setSelectedShape(shape: 'circle' | 'rectangle' | 'triangle' | 'pencil' | 'eraser') {
+    setSelectedShape(shape: 'circle' | 'rectangle' | 'triangle' | 'pencil' | 'eraser' | 'arrow') {
         this.selectedShape = shape;
     }
 
@@ -171,6 +179,33 @@ export class Game {
                         this.ctx?.lineTo(shape.x3, shape.y3);
                         this.ctx?.closePath();
                         this.ctx?.stroke();
+                    }else if(shape?.type === 'arrow'){
+                        this.ctx?.beginPath();
+                        this.ctx.strokeStyle = shape.color || 'crimson';
+                        this.ctx.lineWidth = shape.strokeWidth || 2;
+                        
+                        // Draw the line
+                        this.ctx.moveTo(shape.startX, shape.startY);
+                        this.ctx.lineTo(shape.endX, shape.endY);
+                        this.ctx.stroke();
+                        
+                        // Draw the arrowhead
+                        const angle = Math.atan2(shape.endY - shape.startY, shape.endX - shape.startX);
+                        const headLength = 15; // Length of arrow head
+                        
+                        // Draw the arrowhead lines
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(shape.endX, shape.endY);
+                        this.ctx.lineTo(
+                            shape.endX - headLength * Math.cos(angle - Math.PI/6),
+                            shape.endY - headLength * Math.sin(angle - Math.PI/6)
+                        );
+                        this.ctx.moveTo(shape.endX, shape.endY);
+                        this.ctx.lineTo(
+                            shape.endX - headLength * Math.cos(angle + Math.PI/6),
+                            shape.endY - headLength * Math.sin(angle + Math.PI/6)
+                        );
+                        this.ctx.stroke();
                     }
                 }
             }
@@ -254,8 +289,17 @@ export class Game {
                 strokeWidth: this.currentStrokeWidth * 2.5,
                 color: this.theme === undefined ? 'white' : this.theme === 'dark' ? 'black' : 'white',
             };
+        }else if (this.selectedShape === 'arrow') {
+            shape = {
+                type: 'arrow',
+                startX: this.startX,
+                startY: this.startY,
+                endX: currentX,
+                endY: currentY,
+                strokeWidth: this.currentStrokeWidth,
+                color: this.currentColor
+            };
         }
-
 
         if(!shape) {
             return;
@@ -294,8 +338,7 @@ export class Game {
 
             this.clearCanvas();
             const selectedShape = this.selectedShape;
-            console.log("SELECTED SHAPE", selectedShape);
-
+            
             if (selectedShape === 'rectangle') {
                 const x = Math.min(this.startX, currentX);
                 const y = Math.min(this.startY, currentY);
@@ -356,6 +399,31 @@ export class Game {
                 this.ctx.lineTo(currentX, currentY);
                 this.ctx.lineTo(thirdX, thirdY);
                 this.ctx.closePath();
+                this.ctx.stroke();
+            }else if(selectedShape === 'arrow'){
+                // Draw the line
+                this.ctx.beginPath();
+                this.ctx.strokeStyle = this.currentColor;
+                this.ctx.lineWidth = this.currentStrokeWidth;
+                this.ctx.moveTo(this.startX, this.startY);
+                this.ctx.lineTo(currentX, currentY);
+                this.ctx.stroke();
+                
+                // Draw the arrowhead
+                const angle = Math.atan2(currentY - this.startY, currentX - this.startX);
+                const headLength = 15; // Length of arrow head
+                
+                this.ctx.beginPath();
+                this.ctx.moveTo(currentX, currentY);
+                this.ctx.lineTo(
+                    currentX - headLength * Math.cos(angle - Math.PI/6),
+                    currentY - headLength * Math.sin(angle - Math.PI/6)
+                );
+                this.ctx.moveTo(currentX, currentY);
+                this.ctx.lineTo(
+                    currentX - headLength * Math.cos(angle + Math.PI/6),
+                    currentY - headLength * Math.sin(angle + Math.PI/6)
+                );
                 this.ctx.stroke();
             }else if(selectedShape === 'eraser'){
                 const point = { x: e.clientX, y: e.clientY };
