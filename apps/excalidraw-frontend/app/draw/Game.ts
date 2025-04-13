@@ -87,7 +87,7 @@ export class Game {
         this.currentColor = 'crimson';
         this.currentStrokeWidth = 2;
         this.init();
-        this.initHandler();
+        this.initHandlers();
         this.initMouseHandles();
         this.setColor('crimson');
         this.setStrokeWidth(2);
@@ -109,16 +109,35 @@ export class Game {
         this.clearCanvas();
     }
 
-    initHandler() {
+    initHandlers() {
         this.socket.onmessage = (event) => {
             const message = JSON.parse(event.data);
 
+
             if(message.type === 'chat'){
                 const messageData = JSON.parse(message.message);
-                this.existingShapes.push(messageData);
+                console.log("existing shapes -1", this.existingShapes);
+                this.existingShapes.push(messageData.shape);
+                console.log("existing shapes -2", this.existingShapes);
                 this.clearCanvas();
             }
         }
+    }
+
+    setViewportTransform(panX: number, panY: number, zoom: number) {
+        if (!this.ctx) return;
+        
+        // Reset the current transformation
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        // Clear the canvas with the current theme background
+        this.ctx.fillStyle = this.theme === 'dark' ? 'black' : 'white';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Apply the new transformation
+        this.ctx.setTransform(zoom, 0, 0, zoom, panX, panY);
+        
+        // Redraw all shapes with the new transformation
+        this.clearCanvas();
     }
 
     clearCanvas(){

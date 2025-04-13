@@ -17,7 +17,7 @@ async function verifyToken(token: string) {
 }
 
 export default async function JoinRoom({ params }: { params: { token: string } }) {
-  const { token } = params;
+  const { token } = await params;
 
   const data = await verifyToken(token);
 
