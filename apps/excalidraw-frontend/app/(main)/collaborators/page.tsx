@@ -29,8 +29,7 @@ export default async function CollaboratorsPage() {
   const rooms = await getMyBoards();
   const users = await getUsers();
   const token = await getAuthToken();
-
-  console.log(collaborators);
+  
   if(!token){
     redirect('/signin');
   }
