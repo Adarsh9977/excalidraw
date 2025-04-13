@@ -110,8 +110,43 @@ ws.on('message', async function message(data: any) {
         if (!user) {
             return;
         }
-        user.rooms = user.rooms.filter(x => x !== parsedData.roomId); // Fixed the filter condition
+        user.rooms = user.rooms.filter(x => x !== parsedData.roomId);
         await broadcastRoomUsers(parsedData.roomId);
+    }
+
+    // Handle video call signaling
+    if (parsedData.type === "video-call") {
+        const roomId = parsedData.roomId;
+        const targetUserId = parsedData.targetUserId;
+        const callData = parsedData.callData;
+        const callType = parsedData.callType; // 'offer', 'answer', 'ice-candidate', 'hang-up'
+        
+        // Find the target user
+        const targetUser = users.find(user =>
+            user.userId === targetUserId && user.rooms.includes(roomId)
+        );
+        
+        if (targetUser) {
+            // Forward the call data to the target user
+            targetUser.ws.send(JSON.stringify({
+                type: "video-call",
+                callType: callType,
+                callData: callData,
+                fromUserId: userId,
+                roomId: Number(roomId)
+            }));
+            
+            // Log call activity for debugging
+            console.log(`Video call ${callType} from ${userId} to ${targetUserId} in room ${roomId}`);
+        } else {
+            // Notify caller that target user is not available
+            ws.send(JSON.stringify({
+                type: "video-call-error",
+                message: "User is not available",
+                targetUserId,
+                roomId: Number(roomId)
+            }));
+        }
     }
 
     if (parsedData.type === "chat") {
