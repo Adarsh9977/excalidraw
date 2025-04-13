@@ -8,6 +8,7 @@ import { Button } from "./ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import DraggableSettingsPanel from "./DraggablePanel";
 import DraggableShapeToolbar from "./DraggableShapeToolbar";
+import { VideoCall } from "./VideoCall"; // Import the VideoCall component
 
 interface RoomUser {
     id: string;
@@ -61,13 +62,13 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
 
             return () => {
                 g?.destroy();
-                game?.destroy();
             };
         }
     }, [canvasRef, theme]);
 
     return (
         <div className="h-[100vh] w-[100vw] overflow-hidden">
+            {/* Users popover */}
             <div className="fixed top-3 right-4 p-2 z-50">
                 <Popover>
                     <PopoverTrigger>
@@ -95,6 +96,15 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
                     </PopoverContent>
                 </Popover>
             </div>
+            
+            {/* Add the VideoCall component */}
+            <VideoCall 
+                socket={socket}
+                roomId={roomId}
+                userId={userId!}
+                users={roomUsers}
+            />
+            
             <DraggableShapeToolbar selectedShape={selectedShape} setSelectedShape={setSelectedShape} />
             {selectedShape && <DraggableSettingsPanel color={color} setColor={setColor} strokeWidth={strokeWidth} setStrokeWidth={setStrokeWidth} />}
             <canvas
@@ -104,5 +114,5 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
                 height={window.innerHeight}
             />
         </div>
-    )
+    );
 }
