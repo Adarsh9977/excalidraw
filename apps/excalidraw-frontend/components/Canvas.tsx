@@ -83,27 +83,33 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
                             </Button>
                         </div>
                     </PopoverTrigger>
-                    <PopoverContent className="w-48">
-                        <h3 className="font-semibold mb-2 text-sm">Online Users</h3>
-                        <ul className="space-y-1">
+                    <PopoverContent className="w-48 p-1">
+                        <h3 className="font-semibold mb-2 text-sm text-center">Online Users</h3>
+                        {/* <ul className="space-y-1">
                             {roomUsers.map(user => (
                                 <li key={user.id} className="text-sm flex items-center gap-2">
                                     <div className="w-2 h-2 rounded-full bg-green-500"/>
                                     {user.name || 'Anonymous'}{user.id === userId && ' (You)'}
                                 </li>
                             ))}
-                        </ul>
+                        </ul> */}
+                        <VideoCall 
+                            socket={socket}
+                            roomId={roomId}
+                            userId={userId!}
+                            users={roomUsers}
+                        />
                     </PopoverContent>
                 </Popover>
             </div>
             
             {/* Add the VideoCall component */}
-            <VideoCall 
+            {/* <VideoCall 
                 socket={socket}
                 roomId={roomId}
                 userId={userId!}
                 users={roomUsers}
-            />
+            /> */}
             
             <DraggableShapeToolbar selectedShape={selectedShape} setSelectedShape={setSelectedShape} />
             {selectedShape && <DraggableSettingsPanel color={color} setColor={setColor} strokeWidth={strokeWidth} setStrokeWidth={setStrokeWidth} />}

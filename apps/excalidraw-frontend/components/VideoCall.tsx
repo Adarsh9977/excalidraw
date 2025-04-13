@@ -25,7 +25,7 @@ export function VideoCall({ socket, roomId, userId, users }: VideoCallProps) {
   const localStreamRef = useRef<MediaStream | null>(null);
 
   console.log("users in video call", incomingCall);
-  
+  const admin = users.find(user => user.id === userId);
   
   // Initialize WebRTC when component mounts
   useEffect(() => {
@@ -304,7 +304,7 @@ export function VideoCall({ socket, roomId, userId, users }: VideoCallProps) {
     <>
       {/* Call Dialog */}
       <Dialog open={showCallDialog} onOpenChange={setShowCallDialog}>
-        <DialogContent className="sm:max-w-md" onInteractOutside={(e)=> e.preventDefault()}>
+        <DialogContent className="sm:max-w-md [&>button]:hidden" onInteractOutside={(e)=> e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>
               {isCallActive 
@@ -401,30 +401,37 @@ export function VideoCall({ socket, roomId, userId, users }: VideoCallProps) {
       </Dialog>
       
       {/* User list with call buttons */}
-      <div className="fixed top-40 left-4 p-2 z-50">
-        <h3 className="text-sm font-medium mb-2">Call a collaborator</h3>
         <div className="space-y-2 max-h-60 overflow-y-auto">
+        <div className="flex items-center justify-between bg-background/80 backdrop-blur-sm p-2 rounded-md">
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-6 w-6">
+                    <AvatarFallback>{admin?.name?.[0] || 'U'}</AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm">{admin?.name || 'Anonymous'}(You)</span>
+                </div>
+                
+              </div>
           {users
             .filter(user => user.id !== userId) // Don't show current user
             .map(user => (
-              <div key={user.id} className="flex items-center justify-between bg-background/80 backdrop-blur-sm p-2 rounded-md">
+              <div key={user.id} className="flex items-center justify-between bg-background/80 backdrop-blur-sm px-2 py-1 rounded-md">
                 <div className="flex items-center gap-2">
                   <Avatar className="h-6 w-6">
                     <AvatarFallback>{user.name?.[0] || 'U'}</AvatarFallback>
                   </Avatar>
                   <span className="text-sm">{user.name || 'Anonymous'}</span>
-                </div>
-                <Button
-                  variant="outline"
+                  <Button
+                  variant="ghost"
                   size="icon"
                   onClick={() => startCall(user)}
                   disabled={isCallActive || !!incomingCall}
                 >
-                  <Phone className="h-3 w-3" />
+                  <Phone className="h-3 w-3 text-green-500" />
                 </Button>
+                </div>
+                
               </div>
             ))}
-        </div>
       </div>
     </>
   );
