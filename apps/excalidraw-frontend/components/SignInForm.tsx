@@ -59,7 +59,7 @@ const onSubmit = async (data: FormData) => {
         }
         const token = res.data.token;
         const userId = res.data.user.id;
-        login(token, userId);
+        login(token, userId, res.data.user);
         toast.success("Login successful!");
         setIsLoading(false);
         router.push("/dashboard");

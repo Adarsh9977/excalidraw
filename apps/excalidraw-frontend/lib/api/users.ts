@@ -89,3 +89,43 @@ export async function updateUserRole(userId: string, roomId: string, role: strin
         return {status:400, message: error};
     }
 }
+
+export async function updateUserProfile( data: {name?: string, email?: string, bio?: string}): Promise<{status: Number, data: any}> {
+    try {
+      const token = await getAuthToken();
+      if (!token) {
+        throw new Error('Authentication token not found');
+      }
+      
+      const res = await axios.put(`${HTTP_BACKEND}/user/profile`, data, {
+        headers: {
+          'Authorization': `${token}`
+        }
+      });
+      
+      return {status: res.status, data: res.data};
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      return {status: 400, data: "Email already exists"};
+    }
+  }
+
+export async function getUserProfile(): Promise<{status: number, data: any}> {
+  try {
+    const token = await getAuthToken();
+    if (!token) {
+      throw new Error('Authentication token not found');
+    }
+    
+    const res = await axios.get(`${HTTP_BACKEND}/user/profile`, {
+      headers: {
+        'Authorization': `${token}`
+      }
+    });
+    
+    return {status: res.status, data: res.data};
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    return {status: 400, data: error};
+  }
+}
