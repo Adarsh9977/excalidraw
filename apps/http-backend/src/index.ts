@@ -521,7 +521,7 @@ app.get('/collaborators', middleware, async (req, res) => {
     const collaborators = await prismaClient.roomUser.findMany({
       where: {
         roomId: {
-          in: rooms.map(room => room.id)
+          in: rooms.map((room : any) => room.id)
         }
       },
       include: {
@@ -544,7 +544,7 @@ app.get('/collaborators', middleware, async (req, res) => {
 
     res.status(200).json({
       status:200,
-      collaborators: collaborators.map(collab => ({
+      collaborators: collaborators.map((collab : any) => ({
         userId: collab.user.id,
         name: collab.user.name,
         email: collab.user.email,
@@ -574,6 +574,162 @@ app.get('/chats/:roomId', async (req, res) => {
     res.status(200).json({ status:200, chats})
   }catch (error) {
     res.status(400).json({ status: 400, error: 'Error while fetching chats' });
+  }
+});
+
+// User profile update endpoints
+app.put('/user/profile', middleware, async (req : any, res : any) => {
+  const userId = (req as any).userId;
+  const { name, email, bio } = req.body;
+  
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    // Check if email is already taken by another user
+    if (email) {
+      const existingUser = await prismaClient.user.findFirst({
+        where: {
+          email,
+          id: { not: userId }
+        }
+      });
+      
+      if (existingUser) {
+        return res.status(400).json({ error: 'Email is already in use' });
+      }
+    }
+    
+    // Update user profile
+    const updatedUser = await prismaClient.user.update({
+      where: { id: userId },
+      data: {
+        ...(name && { name }),
+        ...(email && { email }),
+        ...(bio && { bio })
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        bio: true,
+        avatar: true
+      }
+    });
+    
+    res.status(200).json({
+      status: 200,
+      user: updatedUser
+    });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(400).json({ error: 'Failed to update profile' });
+  }
+});
+
+app.put('/user/password', middleware, async (req : any, res : any) => {
+  const userId = (req as any).userId;
+  const { currentPassword, newPassword } = req.body;
+  
+  if (!userId || !currentPassword || !newPassword) {
+    return res.status(400).json({ error: 'Current password and new password are required' });
+  }
+  
+  try {
+    // Get user with password
+    const user = await prismaClient.user.findUnique({
+      where: { id: userId }
+    });
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Verify current password
+    const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password);
+    if (!isPasswordCorrect) {
+      return res.status(400).json({ error: 'Current password is incorrect' });
+    }
+    
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+    // Update password
+    await prismaClient.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword }
+    });
+    
+    res.status(200).json({
+      status: 200,
+      message: 'Password updated successfully'
+    });
+  } catch (error) {
+    console.error('Error updating password:', error);
+    res.status(400).json({ error: 'Failed to update password' });
+  }
+});
+
+app.put('/user/avatar', middleware, async (req : any, res : any) => {
+  const userId = (req as any).userId;
+  const { avatar } = req.body;
+  
+  if (!userId || !avatar) {
+    return res.status(400).json({ error: 'Avatar URL is required' });
+  }
+  
+  try {
+    const updatedUser = await prismaClient.user.update({
+      where: { id: userId },
+      data: { avatar },
+      select: {
+        id: true,
+        avatar: true
+      }
+    });
+    
+    res.status(200).json({
+      status: 200,
+      user: updatedUser
+    });
+  } catch (error) {
+    console.error('Error updating avatar:', error);
+    res.status(400).json({ error: 'Failed to update avatar' });
+  }
+});
+
+// Get user profile
+app.get('/user/profile', middleware, async (req : any, res : any) => {
+  const userId = (req as any).userId;
+  
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    const user = await prismaClient.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        bio: true,
+        avatar: true
+      }
+    });
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    res.status(200).json({
+      status: 200,
+      user
+    });
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.status(400).json({ error: 'Failed to fetch profile' });
   }
 });
 
