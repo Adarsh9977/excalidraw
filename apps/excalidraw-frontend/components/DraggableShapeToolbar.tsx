@@ -9,7 +9,7 @@ export default function DraggableShapeToolbar({
   selectedShape: string | null;
   setSelectedShape: Dispatch<SetStateAction<string | null>>;
 }) {
-  const [position, setPosition] = useState({ x: 20, y: 20 });
+  const [position, setPosition] = useState({ x: window.innerWidth/2.5, y: 20 });
   const dragRef = useRef<HTMLDivElement>(null);
   const offset = useRef({ x: 0, y: 0 });
   const isDragging = useRef(false);

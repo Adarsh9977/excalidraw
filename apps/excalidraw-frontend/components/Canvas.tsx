@@ -3,12 +3,13 @@ import { Game } from "@/app/draw/Game";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Users } from "lucide-react";
+import { ArrowLeft, Users } from "lucide-react";
 import { Button } from "./ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import DraggableSettingsPanel from "./DraggablePanel";
 import DraggableShapeToolbar from "./DraggableShapeToolbar";
 import { VideoCall } from "./VideoCall"; // Import the VideoCall component
+import { useRouter } from "next/navigation";
 
 interface RoomUser {
     id: string;
@@ -24,6 +25,7 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
     const [color, setColor] = useState<string>('#dc143c');
     const [roomUsers, setRoomUsers] = useState<RoomUser[]>([]);
     const { userId } = useAuth();
+    const router = useRouter();
 
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
@@ -68,6 +70,16 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
 
     return (
         <div className="h-[100vh] w-[100vw] overflow-hidden">
+            <div className="fixed top-3 left-4 p-2 z-50">
+                <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => router.push('/dashboard')}
+                    className="bg-background/80 backdrop-blur-sm hover:bg-background/90"
+                >
+                    <ArrowLeft className="h-5 w-5" />
+                </Button>
+            </div>
             {/* Users popover */}
             <div className="fixed top-3 right-4 p-2 z-50">
                 <Popover>
