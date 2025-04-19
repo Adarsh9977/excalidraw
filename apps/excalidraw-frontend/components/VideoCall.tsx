@@ -409,7 +409,7 @@ export function VideoCall({ socket, roomId, userId, users }: VideoCallProps) {
                   </Avatar>
                   <span className="text-sm">{admin?.name || 'Anonymous'}(You)</span>
                 </div>
-                
+
               </div>
           {users
             .filter(user => user.id !== userId) // Don't show current user
@@ -429,7 +429,6 @@ export function VideoCall({ socket, roomId, userId, users }: VideoCallProps) {
                   <Phone className="h-3 w-3 text-green-500" />
                 </Button>
                 </div>
-                
               </div>
             ))}
       </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion';
-import { Mail, Link, Users, Activity } from 'lucide-react';
+import { Mail, Link, Users, Activity, Router } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useState } from 'react';
-import { Collaborator } from '@/lib/api/users';
+import { Collaborator, updateUserRole } from '@/lib/api/users';
+import { useRouter } from 'next/navigation';
 
 
 interface UserCardProps {
@@ -19,12 +20,7 @@ interface UserCardProps {
 export const UserCard = ({ collaborator }: UserCardProps) => {
   const isMobile = useIsMobile();
   const [selectedRole, setSelectedRole] = useState(collaborator.role.toLowerCase());
-
-  const copyInviteLink = () => {
-    const inviteLink = `https://example.com/invite/${collaborator.userId}`;
-    navigator.clipboard.writeText(inviteLink);
-    toast.success('Invite link copied to clipboard');
-  };
+  const router = useRouter();
 
   const handleRoleChange = (newRole: string) => {
     setSelectedRole(newRole);
@@ -33,8 +29,13 @@ export const UserCard = ({ collaborator }: UserCardProps) => {
   const handleUpdate = async () => {
     try {
       // This would be replaced with an actual API call
-      console.log('Changing role for', collaborator.userId, 'to', selectedRole);
-      toast.success(`Updated ${collaborator.name}'s role to ${selectedRole}`);
+      const res = await updateUserRole(collaborator.userId, collaborator.roomId, selectedRole);
+      if(res.status === 200) {
+        router.refresh();
+        toast.success(`Updated ${collaborator.name}'s role to ${selectedRole}`);
+      } else {
+        toast.error('Failed to update role');
+      }
     } catch (error) {
       toast.error('Failed to update role');
     }

@@ -10,6 +10,7 @@ import DraggableSettingsPanel from "./DraggablePanel";
 import DraggableShapeToolbar from "./DraggableShapeToolbar";
 import { VideoCall } from "./VideoCall"; // Import the VideoCall component
 import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 
 interface RoomUser {
     id: string;
@@ -97,20 +98,19 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
                     </PopoverTrigger>
                     <PopoverContent className="w-48 p-1">
                         <h3 className="font-semibold mb-2 text-sm text-center">Online Users</h3>
-                        {/* <ul className="space-y-1">
-                            {roomUsers.map(user => (
-                                <li key={user.id} className="text-sm flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-green-500"/>
-                                    {user.name || 'Anonymous'}{user.id === userId && ' (You)'}
-                                </li>
+                        <ul className="space-y-1">
+                        {roomUsers
+                            .map(user => (
+                            <div key={user.id} className="flex items-center justify-between bg-background/80 backdrop-blur-sm px-2 py-1 rounded-md">
+                                <div className="flex items-center gap-2">
+                                <Avatar className="h-6 w-6">
+                                    <AvatarFallback>{user.name?.[0] || 'U'}</AvatarFallback>
+                                </Avatar>
+                                <span className="text-sm">{user.name || 'Anonymous'}{user.id === userId && ' (You)'}</span>
+                                </div>
+                            </div>
                             ))}
-                        </ul> */}
-                        <VideoCall 
-                            socket={socket}
-                            roomId={roomId}
-                            userId={userId!}
-                            users={roomUsers}
-                        />
+                        </ul>
                     </PopoverContent>
                 </Popover>
             </div>

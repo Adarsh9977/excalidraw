@@ -76,7 +76,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             <SidebarMenu className=' flex flex-col justify-start h-full w-full gap-2 py-2 px-2'>
                 {menuItems.map((item) => (
                     <SidebarMenuItem key={item.label}>
-                    <SidebarMenuButton asChild onClick={() => setActive(item.label)} isActive={active === item.label} tooltip={item.label} className='data-[active=true]:bg-purple-500 dark:data-[active=true]:text-purple-500 dark:data-[active=true]:bg-purple-300 data-[active=true]:text-purple-950'>
+                    <SidebarMenuButton asChild onClick={() => setActive(item.label)} isActive={active === item.label} tooltip={item.label} className='data-[active=true]:bg-gradient-to-r from-violet-300 to-purple-400 dark:from-violet-800 dark:to-purple-900'>
                         <Link href={item.href}>
                         <item.icon />
                         <span>{item.label}</span>

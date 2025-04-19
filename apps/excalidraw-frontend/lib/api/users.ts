@@ -70,3 +70,22 @@ export async function InviteUserToRoom(userId: string, roomId: string, role: str
         return {status:400, message: error};
     }
 }
+
+export async function updateUserRole(userId: string, roomId: string, role: string): Promise<{status: Number, message: any}> {
+    try {
+        const token = await getAuthToken();
+        const res = await axios.put(`${HTTP_BACKEND}/room/${userId}`, {
+            roomId,
+            role
+        },{
+            headers: {
+                'Authorization': `${token}`
+            }
+        }
+    );
+        return {status:res.status, message: res.data};
+    } catch (error) {
+        console.error('Error updating user role:', error);
+        return {status:400, message: error};
+    }
+}
