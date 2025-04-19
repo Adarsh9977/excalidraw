@@ -10,7 +10,8 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^22.14.0"
+    "@types/node": "^22.14.0",
+    "prisma": "^6.6.0"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +19,6 @@
   "type": "commonjs",
   "description": "",
   "dependencies": {
-    "@prisma/client": "6.5.0",
-    "prisma": "^6.5.0"
+    "@prisma/client": "6.6.0"
   }
 }

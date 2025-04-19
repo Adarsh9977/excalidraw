@@ -14,6 +14,7 @@ model User {
   password        String
   name            String
   avatar          String?
+  bio             String?
   adminRooms      Room[]     @relation("RoomAdmin")
   collaborations  RoomUser[]
   chats           Chat[]
