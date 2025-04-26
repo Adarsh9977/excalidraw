@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc -b",
+    "build": "esbuild ./src/index.ts --bundle --platform=node --outfile=./dist/index.js",
     "start": "node ./dist/index.js",
     "dev": "npm run build && npm run start"
   },
@@ -13,10 +13,10 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@repo/db": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/ws": "^8.18.0",
-    "@repo/backend-common": "workspace:*",
-    "@repo/db": "workspace:*"
+    "esbuild": "^0.25.3"
   },
   "keywords": [],
   "author": "",

@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=excalidraw
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./apps/http-backend/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/excalidraw
+      - JWT_SECRET=your_jwt_secret
+    depends_on:
+      - db
+
+  ws-backend:
+    build:
+      context: .
+      dockerfile: ./apps/ws-backend/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/excalidraw
+      - JWT_SECRET=your_jwt_secret
+    depends_on:
+      - db
+  
+  frontend:
+    build:
+      context: .
+      dockerfile: ./apps/excalidraw-frontend/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_BACKEND_URL: http://localhost:3001
+      - NEXT_PUBLIC_WS_URL: ws://localhost:8080
+    depends_on:
+      - backend
+      - ws-backend
+
+volumes:
+  postgres_data:

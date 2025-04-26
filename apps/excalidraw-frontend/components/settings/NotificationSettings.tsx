@@ -26,7 +26,7 @@ export function NotificationSettings({ userId }: { userId: string }) {
   };
 
   const handleSave = () => {
-    toast.success('Notification preferences saved');
+    toast.success('Upcoming Feature: Notification Settings');
   };
 
   return (

@@ -86,7 +86,7 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
                 <Popover>
                     <PopoverTrigger>
                         <div className="relative">
-                            <Button asChild variant='ghost'>
+                            <Button asChild variant='ghost' className="bg-background/80 backdrop-blur-sm hover:bg-background/90">
                                 <div className="relative">
                                     <Users className="h-4 w-4"/>
                                     <span className="absolute -top-2 -right-2 text-primary rounded-full bg-green-400/60 backdrop-blur-xl w-5 h-5 text-xs flex items-center justify-center">
@@ -116,7 +116,7 @@ export function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket})
             </div>
             
             {/* Add the VideoCall component */}
-            {/* <VideoCall 
+            {/* <VideoCall
                 socket={socket}
                 roomId={roomId}
                 userId={userId!}

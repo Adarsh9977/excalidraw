@@ -7,11 +7,17 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useTheme } from 'next-themes';
+import { toast } from 'sonner';
 
 export function AppearanceSettings({ userId }: { userId: string }) {
   const { theme, setTheme } = useTheme();
   const [reducedMotion, setReducedMotion] = useState(false);
   const [gridSize, setGridSize] = useState('medium');
+
+  const onToggleForm = () => {
+    // Save the settings to the database
+    toast.success('Upcoming Feature: Appearance Settings');
+  }
 
   return (
     <Card className="bg-gradient-to-r from-violet-300/20 to-purple-100/20 dark:from-violet-900/10 dark:to-purple-700/10">
@@ -94,6 +100,7 @@ export function AppearanceSettings({ userId }: { userId: string }) {
       </CardContent>
       <CardFooter>
         <Button 
+          onClick={onToggleForm}
           className='bg-gradient-to-r from-violet-300 to-purple-400 dark:from-violet-800 dark:to-purple-900 text-black dark:text-white'
         >
           Save Preferences

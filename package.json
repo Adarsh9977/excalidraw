@@ -5,6 +5,14 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
+    "common:build": "cd packages/common && npm run build",
+    "docker:up": "docker compose up -d",
+    "db:generate": "cd packages/db && npx prisma generate ../..",
+    "db:migrate": "cd packages/db && npx prisma migrate deploy",
+    "start:backend": "cd apps/http-backend && npm run start",
+    "start:frontend": "cd apps/excalidraw-frontend && npm run start",
+    "start:ws-backend": "cd apps/ws-backend && npm run start",
+    "start":"pnpm run start:backend && pnpm run start:frontend && pnpm run start:ws-backend",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
   },
@@ -13,7 +21,7 @@
     "turbo": "^2.4.4",
     "typescript": "5.7.3"
   },
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@10.8.1",
   "engines": {
     "node": ">=18"
   }

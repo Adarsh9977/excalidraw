@@ -63,6 +63,7 @@ export function AccountSettings({ initialData }: AccountSettingsProps) {
   const handlePasswordSubmit = async (e: any) => {
     e.preventDefault();
     // Add your password update logic here
+    toast.success('Upcoming Feature: Password Update');
   };
 
   return (
