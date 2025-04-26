@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '@repo/backend-common/config';
 
 interface JWTPayload {
     userId: string;
@@ -24,7 +23,7 @@ export const middleware = (req: any, res: any, next: any) => {
       ? authHeader.substring(7) 
       : authHeader;
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, "SECR3T");
     req.userId = (decoded as any).userId;
     next();
   } catch (error) {

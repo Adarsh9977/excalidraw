@@ -6,6 +6,8 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+type tParams = Promise< { token: string } >
+
 
 async function verifyToken(token: string) {
   try {
@@ -16,7 +18,7 @@ async function verifyToken(token: string) {
   }
 }
 
-export default async function JoinRoom({ params }: { params: { token: string } }) {
+export default async function JoinRoom({ params }: { params: tParams }) {
   const { token } = await params;
 
   const data = await verifyToken(token);

@@ -61,7 +61,7 @@ const SignUpForm = ({ onToggleForm }: SignUpFormProps) => {
       }
       const token = res.data.token;
       const userId = res.data.user.id;
-      login(token, userId);
+      login(token, userId, res.data.user);
       toast.success("Account created successfully!");      setIsLoading(false);
       router.push("/dashboard");
     } catch (error) {

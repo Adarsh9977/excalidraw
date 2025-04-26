@@ -1,9 +1,8 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '@repo/backend-common/config';
 import { middleware } from './midleware';
 import { CreateRoomSchema, CreateUserSchema, SigninSchema } from '@repo/common/types';
-import { prismaClient } from '@repo/db/client';
+import { prismaClient  } from '@repo/db/client';
 import bcrypt from 'bcryptjs';
 import cors from 'cors';
 import nodemailer from 'nodemailer';
@@ -23,14 +22,20 @@ app.use(express.json());
 app.use(cors());
 
 app.listen(3001, () => {
-  console.log('Server is running on port 3005');
+  console.log('Server is running on port 3001');
 });
 
 
 app.post('/signup', async (req, res) => {
+  const email = req.body.username;
+  const password = req.body.password;
+  const name = req.body.name;
+  if(!email || !password ||!name) {
+    res.status(400).json({ error: 'Email, password and name are required' });
+    return;
+  }
   const parsedData = CreateUserSchema.safeParse(req.body);
   if (!parsedData.success) {
-    console.log(parsedData.error);
     res.status(400).json({ error: parsedData.error.message });
     return;
   }
@@ -43,7 +48,7 @@ app.post('/signup', async (req, res) => {
         name: parsedData.data.name,
       },
     });
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET);
+    const token = jwt.sign({ userId: user.id }, "SECR3T");
     res.status(200).json({
       user: {
         id: user.id,
@@ -78,7 +83,7 @@ app.post('/signin', async(req, res) => {
     res.status(400).json({ error: 'Invalid password' });
     return;
   }
-  const token = jwt.sign({ userId: existingUser.id }, JWT_SECRET);
+  const token = jwt.sign({ userId: existingUser.id }, "SECR3T");
   res.status(200).json({
     user: {
       id: existingUser.id,
@@ -291,7 +296,7 @@ app.post('/invite/:userId', middleware, async(req, res) => {
     // Generate invitation token
     const inviteToken = jwt.sign(
       { userId: targetUserId, roomId: room.id, role: role },
-      JWT_SECRET,
+      "SECR3T",
       { expiresIn: '24h' }
     );
 
@@ -339,7 +344,7 @@ app.get('/verify-invite/:token', async(req:any, res:any) => {
   const { token } = req.params;
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; roomId: number, role: string };
+    const decoded = jwt.verify(token, "SECR3T") as { userId: string; roomId: number, role: string };
     console.log(decoded)
     const room = await prismaClient.room.findUnique({
       where: { id: decoded.roomId },
