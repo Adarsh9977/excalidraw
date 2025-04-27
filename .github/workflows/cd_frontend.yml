@@ -25,9 +25,11 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./apps/http-backend/Dockerfile
+          file: ./apps/excalidraw-frontend/Dockerfile
+          build-args: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend:${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.sha }}
 
       - name: Deploy to the VM
         run: |
@@ -35,6 +37,6 @@ jobs:
           mkdir  -p /home/runner/.ssh
           ls /home/runner/.ssh
           chmod 700 /home/runner/ssh_key
-          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.201.10.59 -t "docker stop backend || true;
-          docker rm backend || true;
-          docker run --name backend -d -p 3001:3001 adarsh9770/backend:${{ github.sha }}"
+          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.201.10.59 -t "docker stop frontend || true;
+          docker rm frontend || true;
+          docker run --name frontend -d -p 3000:3000 adarsh9770/frontend:${{ github.sha }}"
