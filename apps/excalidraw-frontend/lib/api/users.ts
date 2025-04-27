@@ -1,4 +1,3 @@
-import { HTTP_BACKEND } from "@/config";
 import axios from "axios";
 import { getAuthToken } from "../auth";
 
@@ -18,6 +17,8 @@ export interface Collaborator {
     role: string;
     avatar?: string
 }
+
+const HTTP_BACKEND = process.env.HTTP_BACKEND;
 
 export async function getUsers(): Promise<{status: Number, data: User[]}> {
     try {

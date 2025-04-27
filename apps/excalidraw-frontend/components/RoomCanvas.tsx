@@ -1,5 +1,4 @@
 'use client';
-import { WS_URL } from "@/config";
 import { Canvas } from "@/components/Canvas";
 import { useEffect, useState } from "react"
 
@@ -7,7 +6,7 @@ export function RoomCanvas({ roomId, token }: { roomId: string, token : string |
     const [ socket, setSocket ] = useState<WebSocket | null>(null);
 
     useEffect(() => {
-        const ws = new WebSocket(`${WS_URL}?token=${token}`);
+        const ws = new WebSocket(`${process.env.WS_URL}?token=${token}`);
 
         ws.onopen = () => {
             setSocket(ws);

@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from 'sonner';
-import { HTTP_BACKEND } from '@/config';
 import axios from 'axios';
 
 interface RoomData {
@@ -32,7 +31,7 @@ export function JoinRoomCard({ roomData }: JoinRoomCardProps) {
 
   const handleJoinRoom = async () => {
     try {
-      const response = await axios.post(`${HTTP_BACKEND}/join-room`, {
+      const response = await axios.post(`${process.env.HTTP_BACKEND}/join-room`, {
         roomId: roomData.room.id,
         role: roomData.role,
         userId: roomData.user.id,

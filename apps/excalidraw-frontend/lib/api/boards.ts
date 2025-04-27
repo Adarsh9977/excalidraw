@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { HTTP_BACKEND } from '@/config';
 import { getAuthToken } from '@/lib/auth';
 import { Exo } from 'next/font/google';
 
@@ -34,7 +33,7 @@ export async function getBoards(): Promise<{status: Number, data: Board[]}> {
       throw new Error('Authentication token not found');
     }
 
-    const response = await axios.get(`${HTTP_BACKEND}/rooms`, {
+    const response = await axios.get(`${process.env.HTTP_BACKEND}/rooms`, {
       headers: {
         'Authorization': `${token}`
       }
@@ -53,7 +52,7 @@ export async function getMyBoards(): Promise<{status: Number, data: Board[]}> {
       throw new Error('Authentication token not found');
     }
 
-    const response = await axios.get(`${HTTP_BACKEND}/myrooms`, {
+    const response = await axios.get(`${process.env.HTTP_BACKEND}/myrooms`, {
       headers: {
         'Authorization': `${token}`
       }
@@ -72,12 +71,12 @@ export async function createBoard(name: string): Promise<{status: Number, data: 
       throw new Error('Authentication token not found');
     }
 
-    const response = await axios.post(`${HTTP_BACKEND}/room`, {
+    const response = await axios.post(`${process.env.HTTP_BACKEND}/rooms`, {
       roomName: name,
     }, {
       headers: {
         'Authorization': `${token}`
-      }
+      } 
     });
     return {status:response.status, data: response.data.room};
   } catch (error) {
@@ -102,7 +101,7 @@ export async function deleteBoardById(boardId: string): Promise<{status: Number,
       throw new Error('Authentication token not found');
     }
 
-    const res = await axios.delete(`${HTTP_BACKEND}/rooms/${boardId}`, {
+    const res = await axios.delete(`${process.env.HTTP_BACKEND}/rooms/${boardId}`, {
       headers: {
         'Authorization': `${token}`
       }

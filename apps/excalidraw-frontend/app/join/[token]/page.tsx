@@ -1,7 +1,6 @@
 
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { JoinRoomCard } from '@/components/join-room-card';
-import { HTTP_BACKEND } from '@/config';
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -11,7 +10,7 @@ type tParams = Promise< { token: string } >
 
 async function verifyToken(token: string) {
   try {
-    const response = await axios.get(`${HTTP_BACKEND}/verify-invite/${token}`);
+    const response = await axios.get(`${process.env.HTTP_BACKEND}/verify-invite/${token}`);
     return await response.data;
   } catch (error) {
     return { valid: false, error: 'Failed to verify invitation' };

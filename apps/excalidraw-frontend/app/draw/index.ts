@@ -1,28 +1,27 @@
-import { HTTP_BACKEND } from "@/config";
-import axios from "axios";
+// import axios from "axios";
 
-type Shape = {
-    type: 'rect';
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-} | {
-    type: 'circle';
-    centerX: number;
-    centerY: number;
-    radius: number;
-} | {
-    type: 'triangle';
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
-    x3: number;
-    y3: number;
-}
+// type Shape = {
+//     type: 'rect';
+//     x: number;
+//     y: number;
+//     width: number;
+//     height: number;
+// } | {
+//     type: 'circle';
+//     centerX: number;
+//     centerY: number;
+//     radius: number;
+// } | {
+//     type: 'triangle';
+//     x1: number;
+//     y1: number;
+//     x2: number;
+//     y2: number;
+//     x3: number;
+//     y3: number;
+// }
 
-let selectedShape: 'circle' | 'rectangle' | 'triangle' = 'circle';
+// let selectedShape: 'circle' | 'rectangle' | 'triangle' = 'circle';
 
 
 
