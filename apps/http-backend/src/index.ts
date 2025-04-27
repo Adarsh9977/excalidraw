@@ -340,7 +340,7 @@ app.post('/invite/:userId', middleware, async(req, res) => {
 });
 
 // Add new endpoint to verify invitation token
-app.get('/verify-invite/:token', async(req:any, res:any) => {
+app.get('/verify-invite/:token',async(req:any, res:any) => {
   const { token } = req.params;
 
   try {
