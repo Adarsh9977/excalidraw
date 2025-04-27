@@ -14,5 +14,7 @@ RUN pnpm install
 RUN pnpm db:generate
 
 RUN pnpm build
+
 EXPOSE 3001
+
 CMD ["pnpm", "run", "start:backend"]
