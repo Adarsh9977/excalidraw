@@ -18,7 +18,6 @@ export interface Collaborator {
     avatar?: string
 }
 
-const HTTP_BACKEND = process.env.HTTP_BACKEND;
 
 export async function getUsers(): Promise<{status: Number, data: User[]}> {
     try {
@@ -26,7 +25,7 @@ export async function getUsers(): Promise<{status: Number, data: User[]}> {
         if (!token) {
             throw new Error('Authentication token not found');
         }
-        const res = await axios.get(`${HTTP_BACKEND}/users`, {
+        const res = await axios.get(`${process.env.HTTP_BACKEND}/users`, {
             headers: {
                 'Authorization': `${token}`
             }
@@ -41,7 +40,7 @@ export async function getUsers(): Promise<{status: Number, data: User[]}> {
 export async function getCollaborators(): Promise<{status: Number, data: Collaborator[]}> {
     try {
         const token = await getAuthToken();
-        const res = await axios.get(`${HTTP_BACKEND}/collaborators`,{
+        const res = await axios.get(`${process.env.HTTP_BACKEND}/collaborators`,{
             headers: {
                 'Authorization': `${token}`
             }
@@ -56,7 +55,7 @@ export async function getCollaborators(): Promise<{status: Number, data: Collabo
 export async function InviteUserToRoom(userId: string, roomId: string, role: string): Promise<{status: Number, message: any}> {
     try {
         const token = await getAuthToken();
-        const res = await axios.post(`${HTTP_BACKEND}/invite/${userId}`, {
+        const res = await axios.post(`${process.env.HTTP_BACKEND}/invite/${userId}`, {
             roomId,
             role
         },{
@@ -75,7 +74,7 @@ export async function InviteUserToRoom(userId: string, roomId: string, role: str
 export async function updateUserRole(userId: string, roomId: string, role: string): Promise<{status: Number, message: any}> {
     try {
         const token = await getAuthToken();
-        const res = await axios.put(`${HTTP_BACKEND}/room/${userId}`, {
+        const res = await axios.put(`${process.env.HTTP_BACKEND}/room/${userId}`, {
             roomId,
             role
         },{
@@ -98,7 +97,7 @@ export async function updateUserProfile( data: {name?: string, email?: string, b
         throw new Error('Authentication token not found');
       }
       
-      const res = await axios.put(`${HTTP_BACKEND}/user/profile`, data, {
+      const res = await axios.put(`${process.env.HTTP_BACKEND}/user/profile`, data, {
         headers: {
           'Authorization': `${token}`
         }
@@ -118,7 +117,7 @@ export async function getUserProfile(): Promise<{status: number, data: any}> {
       throw new Error('Authentication token not found');
     }
     
-    const res = await axios.get(`${HTTP_BACKEND}/user/profile`, {
+    const res = await axios.get(`${process.env.HTTP_BACKEND}/user/profile`, {
       headers: {
         'Authorization': `${token}`
       }
