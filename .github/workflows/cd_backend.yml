@@ -29,6 +29,18 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend:${{ github.sha }}
 
+      - name: Clean up Docker resources on VM
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
+          mkdir -p /home/runner/.ssh
+          chmod 700 ~/ssh_key
+          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.201.10.59 -t "
+            # Clean up unused containers, images, and volumes
+            docker system prune -af --volumes
+            docker images
+            docker ps -a
+          "
+
       - name: Deploy to the VM
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
