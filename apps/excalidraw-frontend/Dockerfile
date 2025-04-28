@@ -3,6 +3,15 @@ FROM node:18-alpine
 
 WORKDIR /usr/src/app
 
+ARG HTTP_BACKEND
+ARG WS_URL
+ARG DATABASE_URL
+
+ENV HTTP_BACKEND=${HTTP_BACKEND}
+ENV WS_URL=${WS_URL}
+ENV DATABASE_URL=${DATABASE_URL}
+
+
 RUN npm install -g pnpm
 
 COPY ./packages ./packages
