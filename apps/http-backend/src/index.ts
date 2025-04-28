@@ -25,7 +25,6 @@ app.listen(3001,'0.0.0.0', () => {
   console.log('Server is running on port 3001');
 });
 
-
 app.post('/signup', async (req, res) => {
   const email = req.body.username;
   const password = req.body.password;
