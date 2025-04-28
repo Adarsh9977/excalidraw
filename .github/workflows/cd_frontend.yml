@@ -28,6 +28,8 @@ jobs:
           file: ./apps/excalidraw-frontend/Dockerfile
           build-args: |
             DATABASE_URL=${{ secrets.DATABASE_URL }}
+            HTTP_BACKEND=${{ secrets.HTTP_BACKEND }}
+            WS_URL=${{ secrets.WS_URL }}
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.sha }}
 
