@@ -39,4 +39,4 @@ jobs:
           chmod 700 /home/runner/ssh_key
           ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.201.10.59 -t "docker stop frontend || true;
           docker rm frontend || true;
-          docker run --name frontend -d -p 3000:3000 -e DATABASE_URL=${{ secrets.DATABASE_URL }} HTTP_BACKEND=${{ secrets.HTTP_BACKEND }} WS_URL=${{ secrets.WS_URL }} adarsh9770/frontend:${{ github.sha }}"
+          docker run --name frontend -d -p 3000:3000 -e DATABASE_URL=${{ secrets.DATABASE_URL }} -e HTTP_BACKEND=${{ secrets.HTTP_BACKEND }} -e WS_URL=${{ secrets.WS_URL }} adarsh9770/frontend:${{ github.sha }}"

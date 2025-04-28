@@ -37,4 +37,4 @@ jobs:
           chmod 700 /home/runner/ssh_key
           ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.201.10.59 -t "docker stop ws-backend || true:
           docker rm ws-backend || true:
-          docker run --name ws-backend -d -p 8080:8080 -e DATABASE_URL=${{ secrets.DATABASE_URL }} HTTP_BACKEND=${{ secrets.HTTP_BACKEND }} adarsh9770/ws-backend:${{ github.sha }}"
+          docker run --name ws-backend -d -p 8080:8080 -e DATABASE_URL=${{ secrets.DATABASE_URL }} -e HTTP_BACKEND=${{ secrets.HTTP_BACKEND }} adarsh9770/ws-backend:${{ github.sha }}"
