@@ -688,11 +688,11 @@ app.put('/user/password', middleware, async (req : any, res : any) => {
 app.put('/user/avatar', middleware, async (req : any, res : any) => {
   const userId = (req as any).userId;
   const { avatar } = req.body;
-  
+
   if (!userId || !avatar) {
     return res.status(400).json({ error: 'Avatar URL is required' });
   }
-  
+
   try {
     const updatedUser = await prismaClient.user.update({
       where: { id: userId },
@@ -702,7 +702,7 @@ app.put('/user/avatar', middleware, async (req : any, res : any) => {
         avatar: true
       }
     });
-    
+
     res.status(200).json({
       status: 200,
       user: updatedUser
@@ -736,7 +736,7 @@ app.get('/user/profile', middleware, async (req : any, res : any) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    
+
     res.status(200).json({
       status: 200,
       user
