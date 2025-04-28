@@ -86,7 +86,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 ))}
             </SidebarMenu>
           </SidebarContent>
-          
+
           <SidebarFooter className="border-t border-border/50">
             <SidebarMenu>
               <SidebarMenuItem>
