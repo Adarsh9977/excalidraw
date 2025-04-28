@@ -19,6 +19,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/excalidraw
       - JWT_SECRET=your_jwt_secret
+      - FRONTEND_URL=http://frontend:3000
     depends_on:
       - db
 
@@ -41,8 +42,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - HTTP_BACKEND=http://13.201.10.59:3001
-      - WS_URL=ws://13.201.10.59:8080
+      - HTTP_BACKEND=http://backend:3001
+      - WS_URL=ws://ws-backend:8080
     depends_on:
       - backend
       - ws-backend
