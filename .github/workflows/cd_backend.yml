@@ -37,4 +37,4 @@ jobs:
           chmod 700 /home/runner/ssh_key
           ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.201.10.59 -t "docker stop backend || true;
           docker rm backend || true;
-          docker run --name backend -d -p 3001:3001 adarsh9770/backend:${{ github.sha }}"
+          docker run --name backend -d -p 3001:3001 -e DATABASE_URL=${{ secrets.DATABASE_URL }} WS_URL=${{ secrets.WS_URL }} EMAIL_USER=${{ secrets.EMAIL_USER }} EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }} FRONTEND_URL=${{ secrets.FRONTEND_URL }} adarsh9770/backend:${{ github.sha }}"
