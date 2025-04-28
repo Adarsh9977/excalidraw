@@ -41,6 +41,15 @@ app.post('/signup', async (req, res) => {
   }
   const hashedPassword = await bcrypt.hash(parsedData.data.password, 10);
   try {
+    const existingUser = await prismaClient.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    if (existingUser) {
+      res.status(400).json({ error: 'User Alreay Exists' });
+      return;
+    }
     const user = await prismaClient.user.create({
       data: {
         email: parsedData.data.username,
@@ -58,7 +67,7 @@ app.post('/signup', async (req, res) => {
       token
     });
   } catch (error) {
-    res.status(400).json({ error: 'User already exists' });
+    res.status(400).json({ error: error });
   }
 });
 
