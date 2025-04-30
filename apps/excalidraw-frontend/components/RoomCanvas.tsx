@@ -19,6 +19,7 @@ export function RoomCanvas({ roomId, token }: { roomId: string, token : string |
     }, []);
 
     if(!socket) {
+        console.log(process.env.NEXT_PUBLIC_WS_URL);
         return <div>Connecting to server...</div>
     }
 
