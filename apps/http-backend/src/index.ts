@@ -6,7 +6,7 @@ import { prismaClient  } from '@repo/db/client';
 import bcrypt from 'bcryptjs';
 import cors from 'cors';
 import nodemailer from 'nodemailer';
-// import { EMAIL_USER, EMAIL_PASSWORD, FRONTEND_URL } from './config';
+// import { EMAIL_USER, EMAIL_PASSWORD, NEXT_PUBLIC_FRONTEND_URL } from './config';
 
 const app = express();
 
@@ -326,10 +326,10 @@ app.post('/invite/:userId', middleware, async(req, res) => {
               <p><strong>Room:</strong> ${room.slug}</p>
               <p style="margin-top: 20px;">Click the button below to join the room:</p>
               <div style="text-align: center; margin: 30px 0;">
-                <a href="${process.env.FRONTEND_URL}/join/${inviteToken}" style="background-color: #6c5ce7; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-size: 16px;">Join Room</a>
+                <a href="${process.env.NEXT_PUBLIC_FRONTEND_URL}/join/${inviteToken}" style="background-color: #6c5ce7; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-size: 16px;">Join Room</a>
               </div>
               <p>If the button doesn't work, copy and paste this URL into your browser:</p>
-              <p style="word-break: break-word;">${process.env.FRONTEND_URL}/join/${inviteToken}</p>
+              <p style="word-break: break-word;">${process.env.NEXT_PUBLIC_FRONTEND_URL}/join/${inviteToken}</p>
             </div>
             <div style="background-color: #f1effa; text-align: center; padding: 15px; font-size: 13px; color: #888;">
               &copy; ${new Date().getFullYear()} WhiteBoard. All rights reserved.

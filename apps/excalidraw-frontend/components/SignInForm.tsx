@@ -49,7 +49,7 @@ const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
         // This is where you would handle authentication
-        const res = await axios.post(`${process.env.HTTP_BACKEND}/signin`, {
+        const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/signin`, {
             username: data.username,
             password: data.password
         });

@@ -31,7 +31,7 @@ export function JoinRoomCard({ roomData }: JoinRoomCardProps) {
 
   const handleJoinRoom = async () => {
     try {
-      const response = await axios.post(`${process.env.HTTP_BACKEND}/join-room`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/join-room`, {
         roomId: roomData.room.id,
         role: roomData.role,
         userId: roomData.user.id,

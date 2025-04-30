@@ -6,7 +6,7 @@ export function RoomCanvas({ roomId, token }: { roomId: string, token : string |
     const [ socket, setSocket ] = useState<WebSocket | null>(null);
 
     useEffect(() => {
-        const ws = new WebSocket(`${process.env.WS_URL}?token=${token}`);
+        const ws = new WebSocket(`${process.env.NEXT_PUBLIC_WS_URL}?token=${token}`);
 
         ws.onopen = () => {
             setSocket(ws);

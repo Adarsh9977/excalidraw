@@ -10,7 +10,7 @@ type tParams = Promise< { token: string } >
 
 async function verifyToken(token: string) {
   try {
-    const response = await axios.get(`${process.env.HTTP_BACKEND}/verify-invite/${token}`);
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/verify-invite/${token}`);
     return await response.data;
   } catch (error) {
     return { valid: false, error: 'Failed to verify invitation' };
