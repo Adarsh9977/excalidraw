@@ -9,7 +9,6 @@ COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY ./turbo.json ./turbo.json
 COPY ./apps/http-backend ./apps/http-backend
 
-
 RUN pnpm install
 RUN pnpm db:generate
 
