@@ -10,6 +10,16 @@ import nodemailer from 'nodemailer';
 
 const app = express();
 
+const corsOptions = {
+  origin : [
+    process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000',
+    process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080',
+    process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true
+}
+
 // Configure nodemailer
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -19,7 +29,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.listen(3001,'0.0.0.0', () => {
   console.log('Server is running on port 3001');
