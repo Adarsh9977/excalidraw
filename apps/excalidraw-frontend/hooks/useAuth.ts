@@ -40,7 +40,7 @@ export const useAuth = () => {
     Cookies.set('auth_token', token, { expires: 7, sameSite: 'lax' });
     Cookies.set('user_id', userId, { expires: 7, sameSite: 'lax' });
     Cookies.set('user', JSON.stringify(userData), { expires: 7, sameSite: 'lax' });
-    
+
     setAuth({ token, userId, user: userData });
   };
 
