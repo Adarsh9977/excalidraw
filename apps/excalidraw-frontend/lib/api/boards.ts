@@ -71,7 +71,7 @@ export async function createBoard(name: string): Promise<{status: Number, data: 
       throw new Error('Authentication token not found');
     }
 
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/rooms`, {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/room`, {
       roomName: name,
     }, {
       headers: {
