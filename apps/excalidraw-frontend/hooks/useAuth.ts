@@ -25,7 +25,7 @@ export const useAuth = () => {
     const storedToken = Cookies.get('auth_token');
     const storedUserId = Cookies.get('user_id');
     const storedUser = Cookies.get('user');
-    
+
     if (storedToken && storedUserId && storedUser) {
       setAuth({ 
         token: storedToken, 
