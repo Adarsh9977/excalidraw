@@ -38,7 +38,7 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
           mkdir -p /home/runner/.ssh
           chmod 700 ~/ssh_key
-          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@3.7.73.78 -t "
+          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.232.153.196 -t "
             # Clean up unused containers, images, and volumes
             docker system prune -af --volumes
             docker images
@@ -51,7 +51,7 @@ jobs:
           mkdir  -p /home/runner/.ssh
           ls /home/runner/.ssh
           chmod 700 /home/runner/ssh_key
-          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@3.7.73.78 -t "docker stop frontend || true;
+          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.232.153.196 -t "docker stop frontend || true;
           docker rm frontend || true;
           docker run --name frontend -d -p 3000:3000 \
           -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
