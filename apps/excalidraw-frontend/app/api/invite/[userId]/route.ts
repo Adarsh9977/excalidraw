@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
   });
 
 
-export async function POST(req: NextRequest, { params }: { params: { userId: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{userId : string}>}) {
   const targetUserId = (await params).userId;
 
   const body = await req.json();
