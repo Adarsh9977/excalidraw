@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient  } from '@repo/db/client';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
-import { EMAIL_PASSWORD, EMAIL_USER } from '../../../../../http-backend/src/config';
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -62,8 +61,6 @@ export async function POST(req: NextRequest, { params }: { params: { userId: str
       { expiresIn: '24h' }
     );
 
-    console.log("inviteToken", inviteToken)
-
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: targetUser.email,
@@ -93,8 +90,6 @@ export async function POST(req: NextRequest, { params }: { params: { userId: str
         </div>
       `,
     };
-
-    console.log(mailOptions)
 
     await transporter.sendMail(mailOptions);
     return NextResponse.json({ message: 'Invitation sent successfully' }, { status: 200 });

@@ -4,9 +4,11 @@ import { UserCard } from '@/components/collaborators/UserCard';
 import { InviteButton } from '@/components/collaborators/InviteButton';
 import { getMyBoards } from '@/lib/api/boards';
 import { getCollaborators, getUsers } from '@/lib/api/users';
-import { getAuthToken } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { prismaClient } from '@repo/db/client';
 
 // Add metadata for SEO
 export const metadata: Metadata = {
@@ -34,16 +36,59 @@ function CollaboratorsLoading() {
 }
 
 export default async function CollaboratorsPage() {
-  const collaborators = await getCollaborators();
-  const rooms = await getMyBoards();
-  const users = await getUsers();
-  const token = await getAuthToken();
+  const session = await getServerSession(authOptions);
 
-  console.log('collaborators', collaborators);
-  
-  if(!token){
+  if(!session || !session.user.id){
     redirect('/signin');
   }
+
+  const rooms = await prismaClient.room.findMany({
+    where: { adminId: session.user.id },
+    include: { collaborators: true },
+  });
+
+  const collaborators = await prismaClient.roomUser.findMany({
+    where: {
+        roomId: {
+        in: rooms.map((room: any) => room.id),
+        },
+    },
+    include: {
+        user: {
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            avatar: true,
+        },
+        },
+        room: {
+        select: {
+            id: true,
+            slug: true,
+        },
+        },
+    },
+    });
+
+
+
+  const users = await prismaClient.user.findMany({
+    where: {
+      id: {
+        not: session.user.id,
+      },
+    },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      avatar: true,
+    },
+  });
+
+  console.log('collaborators', collaborators);
+
 
   return (
       <main className="p-4 sm:p-6 space-y-6 sm:space-y-8 bg-gradient-to-br from-violet-50/30 to-transparent dark:from-violet-950/20 dark:to-transparent min-h-screen">
@@ -55,20 +100,20 @@ export default async function CollaboratorsPage() {
             <p className="text-muted-foreground mt-1">Manage your team and invite new members</p>
           </div>
 
-          <InviteButton rooms={rooms.data} users={users.data} />
+          <InviteButton rooms={rooms} users={users} />
         </header>
 
         <section aria-label="Collaborator list">
           <Suspense fallback={<CollaboratorsLoading />}>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {collaborators.data.length>0 && collaborators.data.map((collaborator, index) => (
+              {collaborators.length>0 && collaborators.map((collaborator, index) => (
                 <UserCard
                   key={index}
                   collaborator={collaborator}
                 />
               ))}
             </div>
-            {collaborators.data.length === 0 && (
+            {collaborators.length === 0 && (
                 <div className="flex flex-col items-center justify-center gap-2 w-full py-24">
                   <h2 className="text-violet-800 font-bold text-2xl">No collaborators yet</h2>
                   <p className="text-muted-foreground text-xl">Invite your teammates to join</p>

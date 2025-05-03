@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { signIn } from 'next-auth/react';
 
 type FormData = z.infer<typeof SigninSchema>;
 
@@ -48,21 +49,15 @@ const {
 const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-        // This is where you would handle authentication
-        const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/signin`, {
+        await signIn('credentials', {
             username: data.username,
-            password: data.password
-        });
-        if(res.status !== 200){
-            toast.error("Login failed. Please try again.");
-            return;
-        }
-        const token = res.data.token;
-        const userId = res.data.user.id;
-        login(token, userId, res.data.user);
+            password: data.password,
+            redirect: false,
+            callbackUrl: '/dashboard'
+        })
         toast.success("Login successful!");
         setIsLoading(false);
-        router.push("/dashboard");
+        router.replace("/dashboard");
     } catch (error) {
         console.error("Login error:", error);
         setIsLoading(false);
