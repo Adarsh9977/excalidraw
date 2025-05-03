@@ -54,16 +54,10 @@ export async function getCollaborators(): Promise<{status: Number, data: Collabo
 
 export async function InviteUserToRoom(userId: string, roomId: string, role: string): Promise<{status: Number, message: any}> {
     try {
-        const token = await getAuthToken();
-        const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/invite/${userId}`, {
+        const res = await axios.post(`/api/invite/${userId}`, {
             roomId,
             role
-        },{
-            headers: {
-                'Authorization': `${token}`
-            }
-        }
-    );
+        });
         return {status:res.status, message: res.data};
     } catch (error) {
         console.error('Error inviting user to room:', error);

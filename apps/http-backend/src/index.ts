@@ -20,14 +20,6 @@ const corsOptions = {
   credentials: true
 }
 
-// Configure nodemailer
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD
-  }
-});
 app.use(express.json());
 app.use(cors(corsOptions));
 
@@ -265,95 +257,6 @@ app.get('/room/:slug', async(req, res) => {
     });
   } catch (error) {
     res.status(400).json({ error: 'Room not found' });
-  }
-});
-
-app.post('/invite/:userId', middleware, async(req, res) => {
-  const targetUserId = String(req.params.userId);
-  const roomId = req.body.roomId;
-  const role = req.body.role;
-
-  if (!targetUserId || !roomId || !role) {
-    res.status(400).json({ error: 'User ID and Room ID are required' });
-    return;
-  }
-
-  try {
-    const targetUser = await prismaClient.user.findUnique({
-      where: { id: targetUserId }
-    });
-
-    if (!targetUser) {
-      res.status(404).json({ error: 'User not found' });
-      return;
-    }
-
-    const room = await prismaClient.room.findUnique({
-      where: { id: parseInt(roomId) },
-      include: { admin: true },
-    });
-
-    if (!room) {
-      res.status(404).json({ error: 'Room not found' });
-      return;
-    }
-
-    const existingMembership = await prismaClient.roomUser.findUnique({
-      where: {
-        userId_roomId: {
-          userId: targetUserId,
-          roomId: room.id
-        }
-      }
-    })
-
-    if(existingMembership) {
-      res.status(400).json({ status:400, error: 'User is already a member of this room' });
-    }
-
-    // Generate invitation token
-    const inviteToken = jwt.sign(
-      { userId: targetUserId, roomId: room.id, role: role },
-      "SECR3T",
-      { expiresIn: '24h' }
-    );
-
-    // Send invitation email with the new token
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: targetUser.email,
-      subject: 'Invitation to Join Room',
-      html: `
-        <div style="font-family: Arial, sans-serif; background-color: #f9f7fc; padding: 20px;">
-          <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden;">
-            <div style="background-color: #6c5ce7; padding: 20px; text-align: center;">
-              <h1 style="margin: 0; color: #ffffff;">WhiteBoard</h1>
-            </div>
-            <div style="padding: 30px; color: #333333;">
-              <h2 style="color: #6c5ce7;">Room Invitation</h2>
-              <p>Hello <strong>${targetUser.name || 'there'}</strong>,</p>
-              <p><strong>${room.admin.name}</strong> has invited you to join a room on <strong>WhiteBoard</strong>.</p>
-              <p><strong>Room:</strong> ${room.slug}</p>
-              <p style="margin-top: 20px;">Click the button below to join the room:</p>
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${process.env.NEXT_PUBLIC_FRONTEND_URL}/join/${inviteToken}" style="background-color: #6c5ce7; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-size: 16px;">Join Room</a>
-              </div>
-              <p>If the button doesn't work, copy and paste this URL into your browser:</p>
-              <p style="word-break: break-word;">${process.env.NEXT_PUBLIC_FRONTEND_URL}/join/${inviteToken}</p>
-            </div>
-            <div style="background-color: #f1effa; text-align: center; padding: 15px; font-size: 13px; color: #888;">
-              &copy; ${new Date().getFullYear()} WhiteBoard. All rights reserved.
-            </div>
-          </div>
-        </div>
-      `
-    };
-
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ status:200, message: 'Invitation sent successfully' });
-  } catch (error) {
-    console.error('Error sending invitation:', error);
-    res.status(500).json({ error: 'Failed to send invitation' });
   }
 });
 

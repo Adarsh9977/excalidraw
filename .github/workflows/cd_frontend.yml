@@ -57,4 +57,7 @@ jobs:
           -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
           -e NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }} \
           -e NEXT_PUBLIC_WS_URL=${{ secrets.NEXT_PUBLIC_WS_URL }} \
+          -e EMAIL_USER=${{ secrets.EMAIL_USER }} \
+          -e EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }} \
+          -e NEXT_PUBLIC_FRONTEND_URL=${{ secrets.NEXT_PUBLIC_FRONTEND_URL }} \
           adarsh9770/frontend:${{ github.sha }}"
