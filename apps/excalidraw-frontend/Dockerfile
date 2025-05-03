@@ -21,6 +21,8 @@ COPY ./turbo.json ./turbo.json
 COPY ./apps/excalidraw-frontend ./apps/excalidraw-frontend
 
 RUN pnpm install
+RUN pnpm db:generate
+
 RUN pnpm build
 EXPOSE 3000
 

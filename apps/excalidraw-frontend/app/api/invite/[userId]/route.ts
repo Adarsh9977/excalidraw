@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient  } from '@repo/db/client';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
-import { EMAIL_PASSWORD, EMAIL_USER } from '../../../../../http-backend/src/config';
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',

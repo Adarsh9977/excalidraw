@@ -38,7 +38,7 @@ const {
     handleSubmit,
     formState: { errors },
 } = useForm<FormData>({
-    resolver: zodResolver(SigninSchema),
+    resolver: zodResolver(SigninSchema) as any,
     defaultValues: {
     username: "",
     password: "",

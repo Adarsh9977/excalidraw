@@ -38,7 +38,7 @@ const SignUpForm = ({ onToggleForm }: SignUpFormProps) => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(CreateUserSchema),
+    resolver: zodResolver(CreateUserSchema) as any,
     defaultValues: {
       name: "",
       username: "",
