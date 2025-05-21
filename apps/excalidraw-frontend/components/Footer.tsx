@@ -12,7 +12,7 @@ const Footer = () => {
                 <path d="M8 16C8 11.5817 11.5817 8 16 8C20.4183 8 24 11.5817 24 16C24 20.4183 20.4183 24 16 24" stroke="white" strokeWidth="3" strokeLinecap="round" />
                 <path d="M20 16C20 18.2091 18.2091 20 16 20C13.7909 20 12 18.2091 12 16C12 13.7909 13.7909 12 16 12" stroke="white" strokeWidth="3" strokeLinecap="round" />
               </svg>
-              Whimsical
+              Whiteboard
             </div>
             <p className="text-gray-600 dark:text-primary mb-4">
               Sketch together, create together. The virtual whiteboard for collaborative teams.
@@ -72,7 +72,7 @@ const Footer = () => {
         
         <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-600 dark:text-gray-400 mt-3.5 text-sm">
-            © {new Date().getFullYear()} Whimsical. All rights reserved.
+            © {new Date().getFullYear()} Whiteboard. All rights reserved.
           </p>
           
           <div className="flex items-center mt-4 md:mt-0">
