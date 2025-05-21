@@ -8,7 +8,7 @@ interface User {
     ws: WebSocket,
     rooms: string[],
     userId: string,
-    username?: string  // Add username to user info
+    username?: string
 }
 
 const users: User[] = [];
