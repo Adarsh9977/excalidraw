@@ -17,7 +17,6 @@ export function InviteButton({ rooms, users }: InviteButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleInvite = async (roomId: string, userId: string, role:string) => {
-    // This would be replaced with an actual API call
     const user = users.find(u => u.id === userId);
     if (!user) {
       toast.error('User not found');
