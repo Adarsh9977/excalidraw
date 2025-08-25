@@ -53,7 +53,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const pathname = usePathname();
   const router = useRouter();
 
-
   useEffect(() => {
     const currentMenuItem = menuItems.find(item => pathname.startsWith(item.href));
     if (currentMenuItem) {
