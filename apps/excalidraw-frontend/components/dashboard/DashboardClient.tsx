@@ -97,12 +97,12 @@ export const DashboardClient = ({ initialBoards }: DashboardClientProps) => {
       <header className="flex justify-between items-center">
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
+            <Button className="gap-2 bg-[#006239] text-white hover:opacity-80 [box-shadow:0_-3px_8px_0_#ffffff60_inset]">
               <Plus size={16} />
               New Board
             </Button>
           </DialogTrigger>
-          <DialogContent className="border-violet-200 dark:border-violet-800">
+          <DialogContent className="border-[#006239] border-dashed bg-black">
             <DialogHeader>
               <DialogTitle>Create New Whiteboard</DialogTitle>
               <DialogDescription>
@@ -116,14 +116,14 @@ export const DashboardClient = ({ initialBoards }: DashboardClientProps) => {
                 placeholder="My Awesome Whiteboard"
                 value={newBoardName}
                 onChange={(e) => setNewBoardName(e.target.value)}
-                className="mt-2 focus-visible:ring-violet-500"
+                className="mt-2 border-dashed focus-visible:ring-[#006239] focus-visible:ring-1"
               />
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)} className='border-dashed'>
                 Cancel
               </Button>
-              <Button disabled={createBoardLoading} onClick={createNewBoard} className="bg-violet-600 hover:bg-violet-700 text-white">
+              <Button disabled={createBoardLoading} onClick={createNewBoard} className="bg-[#006239] hover:bg-[#006239] text-white">
                 { createBoardLoading ? 'Creating...' : 'Create Board' }
               </Button>
             </DialogFooter>
@@ -134,18 +134,18 @@ export const DashboardClient = ({ initialBoards }: DashboardClientProps) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Create new board card */}
         <motion.div
-          whileHover={{ scale: 1.02 }}
+          whileHover={{ y: -6 }}
           whileTap={{ scale: 0.98 }}
         >
-          <Card className="h-full border-dashed border-violet-300 dark:border-violet-700 cursor-pointer hover:bg-violet-50/50 dark:hover:bg-violet-900/20 transition-colors">
+          <Card className="h-full bg-black border-dashed border-[#006239] hover:border-[#009758] cursor-pointer hover:bg-[#00975820]  transition-colors">
             <CardContent className="flex flex-col items-center justify-center h-64">
               <div onClick={()=>{
                 setIsDialogOpen(true);
-              }} className="h-20 w-20 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-violet-200 dark:shadow-violet-900/20">
-                <Plus className="h-10 w-10" />
+              }} className="h-20 w-20 border border-dashed border-[#202020]  flex items-center justify-center text-white ">
+                <Plus className="h-10 w-10 text-[#009758]" />
               </div>
-              <h3 className="mt-6 text-xl font-semibold text-violet-800 dark:text-violet-300">Create New Board</h3>
-              <p className="text-sm text-muted-foreground mt-2 text-center">
+              <h3 className="mt-6 text-xl font-semibold text-[#009758]">Create New Board</h3>
+              <p className="text-sm text-neutral-400 mt-1 text-sm text-center">
                 Start with a blank whiteboard
               </p>
             </CardContent>
@@ -156,50 +156,48 @@ export const DashboardClient = ({ initialBoards }: DashboardClientProps) => {
         {boards.map((board: Board, index) => (
           <motion.div 
             key={index}
-            whileHover={{ scale: 1.02 }}
+            whileHover={{ y: -6 }}
             whileTap={{ scale: 0.98 }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
             className=''
           >
-            <Card className="h-full cursor-pointer border-violet-200 dark:border-violet-800 hover:border-violet-400 dark:hover:border-violet-500 transition-all py-0 overflow-hidden group">
-              <CardHeader className="bg-gradient-to-r from-violet-100 to-purple-100 dark:from-violet-900/40 dark:to-purple-900/30 p-4">
-                <CardTitle className="text-violet-800 dark:text-violet-300">{board.slug}</CardTitle>
-                <CardDescription>
+            <Card className="h-full cursor-pointer border-[#006239] border-dashed hover:border-[#009758] transition-all py-0 overflow-hidden group bg-black">
+              <CardHeader className=" px-4 pt-4 !pb-3 border-b border-dashed border-[#006239]">
+                <CardTitle className="text-[#009758] text-xl capitalize">{board.slug}</CardTitle>
+                <CardDescription className='text-sm text-neutral-400'>
                   Last updated {formatDate(board.updatedAt)}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="flex-grow pt-6">
-                <div className="h-32 bg-white dark:bg-slate-900 rounded-md flex items-center justify-center overflow-hidden relative">
-                  <div className="absolute inset-0 bg-gradient-to-br from-violet-100/50 via-transparent to-purple-100/50 dark:from-violet-900/20 dark:via-transparent dark:to-purple-900/20 opacity-70"></div>
-                  <Grid3X3 className="h-12 w-12 text-violet-300 dark:text-violet-700" />
+              <CardContent className="flex-grow">
+                <div className="h-32 bg-black flex items-center justify-center overflow-hidden relative">
+                  <Grid3X3 strokeWidth={0.5}  className="h-32 w-32 text-neutral-500 z-20 " />
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/10 dark:to-purple-900/10 p-3">
+              <CardFooter className="flex border border-dashed border-[#202020] m-1 justify-between bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/10 dark:to-purple-900/10 p-1 px-2">
                 <div className="flex items-center text-sm text-muted-foreground gap-4">
                   <div className="flex items-center gap-1">
-                    <Calendar size={14} className="text-violet-500" />
-                    <span>{formatDate(board.createdAt)}</span>
+                    <Calendar strokeWidth={0.8} size={16} className="text-[#009758]" />
+                    <span className='text-xs text-neutral-300 font-light'>{formatDate(board.createdAt)}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Users size={14} className="text-violet-500" />
-                    <span>{board.collaborators ? board.collaborators.length : 0}</span>
+                    <Users strokeWidth={0.8} size={16} className="text-[#009758]" />
+                    <span className='text-xs text-neutral-300 font-light'>{board.collaborators ? board.collaborators.length : 0}</span>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-1">
                   <AlertDialog open={boardToDelete === board.id} onOpenChange={(isOpen) => !isOpen && setBoardToDelete(null)}>
                     <AlertDialogTrigger asChild>
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="text-red-600 hover:text-red-800 hover:bg-red-100 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/50"
+                        className="text-red-600 hover:text-red-800 hover:bg-red-100 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/50 "
                         onClick={(e) => {
                           e.stopPropagation();
                           setBoardToDelete(board.id);
                         }}
                       >
-                        <Trash2 size={14} />
+                        <Trash2 size={16} strokeWidth={0.8} />
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
@@ -224,10 +222,10 @@ export const DashboardClient = ({ initialBoards }: DashboardClientProps) => {
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="text-violet-600 hover:text-violet-800 hover:bg-violet-100 dark:text-violet-400 dark:hover:text-violet-300 dark:hover:bg-violet-900/50"
+                    className="text-[#006239] hover:text-[#009758] hover:bg-[#009758] text-[#009758]  font-light font-sm"
                     onClick={() => router.push(`/canvas/${board.id}`)}
                   >
-                    <Pencil size={14} className="mr-1" /> Open
+                    <Pencil size={16} strokeWidth={0.8} className="text-[#009758]" /> Open
                   </Button>
                 </div>
               </CardFooter>

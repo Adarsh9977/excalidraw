@@ -60,7 +60,7 @@ export const InviteModal = ({ isOpen, onOpenChange, rooms, users, onInvite }: In
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[90vw] max-w-md border-violet-200 dark:border-violet-800">
+      <DialogContent className="w-[90vw] max-w-md border-[#006239] border-dashed dark:border-[#006239]">
         <DialogHeader>
           <DialogTitle>Invite a Collaborator</DialogTitle>
           <DialogDescription>
@@ -71,7 +71,7 @@ export const InviteModal = ({ isOpen, onOpenChange, rooms, users, onInvite }: In
           <div className="space-y-2">
             <Label htmlFor="room">Select Room</Label>
             <Select value={selectedRoom} onValueChange={setSelectedRoom}>
-              <SelectTrigger id="room" className="w-full focus-visible:ring-violet-500">
+              <SelectTrigger id="room" className="w-full focus-visible:ring-[#006239] border border-dashed">
                 <SelectValue placeholder="Select a room" />
               </SelectTrigger>
               <SelectContent>
@@ -86,7 +86,7 @@ export const InviteModal = ({ isOpen, onOpenChange, rooms, users, onInvite }: In
           <div className="space-y-2">
             <Label htmlFor="user">Select User</Label>
             <Select value={selectedUser} onValueChange={setSelectedUser}>
-              <SelectTrigger id="user" className="w-full focus-visible:ring-violet-500">
+              <SelectTrigger id="user" className="w-full focus-visible:ring-[#006239] border border-dashed">
                 <SelectValue placeholder="Select a user" />
               </SelectTrigger>
               <SelectContent>
@@ -101,22 +101,22 @@ export const InviteModal = ({ isOpen, onOpenChange, rooms, users, onInvite }: In
           <div className="space-y-2">
             <Label htmlFor="role">Select Role</Label>
             <Select value={selectedRole} onValueChange={setSelectedRole}>
-              <SelectTrigger id="role" className="w-full focus-visible:ring-violet-500">
+              <SelectTrigger id="role" className="w-full focus-visible:ring-[#006239] border border-dashed">
                 <SelectValue placeholder="Select a role" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="viewer">Viewer</SelectItem>
-                <SelectItem value="editor">Editor</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
+              <SelectContent className='border-dashed border bg-black'>
+                <SelectItem value="viewer" className='hover:bg-[#009758] text-white'>Viewer</SelectItem>
+                <SelectItem value="editor" className='hover:bg-[#009758] text-white'>Editor</SelectItem>
+                <SelectItem value="admin" className='hover:bg-[#009758] text-white'>Admin</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" className='border-dashed bg-black' onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handleInvite} className="bg-violet-600 hover:bg-violet-700 text-white">
+          <Button onClick={handleInvite} className="bg-[#006239] hover:bg-[#006239] text-white">
             <Send size={16} className="mr-2" />
             Send Invitation
           </Button>

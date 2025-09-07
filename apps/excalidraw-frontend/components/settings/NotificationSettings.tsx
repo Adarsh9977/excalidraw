@@ -30,10 +30,10 @@ export function NotificationSettings({ userId }: { userId: string }) {
   };
 
   return (
-    <Card className="bg-gradient-to-r from-violet-300/20 to-purple-100/20 dark:from-violet-900/10 dark:to-purple-700/10">
+    <Card className="bg-black border border-dashed border-[#006239]">
       <CardHeader>
-        <CardTitle>Notification Preferences</CardTitle>
-        <CardDescription>
+        <CardTitle className='text-[#009758] text-xl capitalize'>Notifications</CardTitle>
+        <CardDescription className='text-neutral-400 text-sm font-light'>
           Control how and when you receive notifications
         </CardDescription>
       </CardHeader>
@@ -135,7 +135,7 @@ export function NotificationSettings({ userId }: { userId: string }) {
       <CardFooter>
         <Button 
           onClick={handleSave}
-          className='bg-gradient-to-r from-violet-300 to-purple-400 dark:from-violet-800 dark:to-purple-900 text-black dark:text-white'
+          className='bg-[#006239] hover:bg-[#009758] text-white'
         >
           Save Preferences
         </Button>

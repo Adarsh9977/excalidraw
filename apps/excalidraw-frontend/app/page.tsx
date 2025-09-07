@@ -15,7 +15,7 @@ export default async function Home() {
       {/* <BackgroundElements /> */}
       <Navbar token={token} />
 
-      <main className="hide-scrollbar">
+      <main className="hide-scrollbar ">
         <HeroSection token={token} />
         <FeaturesSection />
         <HowItWorksSection />

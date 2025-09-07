@@ -90,7 +90,7 @@ export async function updateUserProfile( data: {name?: string, email?: string, b
       if (!token) {
         throw new Error('Authentication token not found');
       }
-      
+
       const res = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/profile`, data, {
         headers: {
           'Authorization': `${token}`

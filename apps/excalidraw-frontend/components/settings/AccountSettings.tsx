@@ -68,9 +68,9 @@ export function AccountSettings({ initialData }: AccountSettingsProps) {
 
   return (
     <>
-      <Card className='bg-gradient-to-r from-violet-300/20 to-purple-100/20 dark:from-violet-900/10 dark:to-purple-700/10'>
+      <Card className='border-dashed border-[#006239] bg-black'>
           <CardHeader>
-            <CardTitle>Account Information</CardTitle>
+            <CardTitle className='text-[#009758] text-xl capitalize'>Account Information</CardTitle>
             <CardDescription>
               Update your account details and personal information
             </CardDescription>
@@ -86,7 +86,7 @@ export function AccountSettings({ initialData }: AccountSettingsProps) {
                     value={formData.name}
                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="Your name"
-                    className='focus-visible:border-violet-800 focus-visible:ring-0 focus-visible:ring-offset-0'
+                    className='border-dashed focus-visible:ring-[#006239] focus-visible:ring-1'
                   />
                 </div>
                 <div className="space-y-2">
@@ -98,7 +98,7 @@ export function AccountSettings({ initialData }: AccountSettingsProps) {
                     value={formData.email}
                     onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                     placeholder="Your email"
-                    className='focus-visible:border-violet-800 focus-visible:ring-0 focus-visible:ring-offset-0'
+                    className='border-dashed focus-visible:ring-[#006239] focus-visible:ring-1'
                   />
                 </div>
               </div>
@@ -112,7 +112,7 @@ export function AccountSettings({ initialData }: AccountSettingsProps) {
                   name="bio"
                   value={formData.bio}
                   onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-                  className="w-full min-h-[100px] rounded-md border focus-visible:border-violet-800 focus-visible:ring-0 focus-visible:ring-offset-0 px-3 py-2 text-sm dark:bg-input/30"
+                  className="w-full min-h-[100px] border-dashed focus-visible:ring-[#006239] focus-visible:ring-1"
                   placeholder="Tell us about yourself"
                 />
               </div>
@@ -121,7 +121,7 @@ export function AccountSettings({ initialData }: AccountSettingsProps) {
           <CardFooter className="flex justify-between">
             <Button type="button" variant="outline">Cancel</Button>
             <Button
-              className='cursor-pointer bg-gradient-to-r from-violet-300 to-purple-400 dark:from-violet-800 dark:to-purple-900 text-black dark:text-white'
+              className='cursor-pointer bg-[#006239] hover:bg-[#009758] text-white'
               onClick={handleProfileSubmit}
             >
               Save Changes
@@ -129,10 +129,10 @@ export function AccountSettings({ initialData }: AccountSettingsProps) {
           </CardFooter>
       </Card>
 
-      <Card className="mt-6 bg-gradient-to-r from-violet-300/20 to-purple-100/20 dark:from-violet-900/10 dark:to-purple-700/10">
+      <Card className="mt-6 border-dashed border-[#006239] bg-black">
           <CardHeader>
-            <CardTitle>Password</CardTitle>
-            <CardDescription>
+            <CardTitle className='text-[#009758] text-xl capitalize'>Password</CardTitle>
+            <CardDescription className='text-neutral-400 text-sm font-light'>
               Change your password
             </CardDescription>
           </CardHeader>
@@ -145,7 +145,7 @@ export function AccountSettings({ initialData }: AccountSettingsProps) {
                 type="password"
                 value={passwordData.currentPassword}
                 onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
-                className='focus-visible:border-violet-800 focus-visible:ring-0 focus-visible:ring-offset-0'
+                className=''
               />
             </div>
             <div className="space-y-2">
@@ -156,7 +156,7 @@ export function AccountSettings({ initialData }: AccountSettingsProps) {
                 type="password"
                 value={passwordData.newPassword}
                 onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
-                className='focus-visible:border-violet-800 focus-visible:ring-0 focus-visible:ring-offset-0'
+                
               />
             </div>
             <div className="space-y-2">
@@ -167,14 +167,13 @@ export function AccountSettings({ initialData }: AccountSettingsProps) {
                 type="password"
                 value={passwordData.confirmPassword}
                 onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                className='focus-visible:border-violet-800 focus-visible:ring-0 focus-visible:ring-offset-0'
               />
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className='flex justify-end'>
             <Button 
               type="submit"
-              className='bg-gradient-to-r from-violet-300 to-purple-400 dark:from-violet-800 dark:to-purple-900 text-black dark:text-white'
+              className='bg-[#006239] hover:bg-[#009758] text-white'
             >
               Update Password
             </Button>

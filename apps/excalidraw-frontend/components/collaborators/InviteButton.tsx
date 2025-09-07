@@ -35,7 +35,7 @@ export function InviteButton({ rooms, users }: InviteButtonProps) {
     <>
       <Button
         onClick={() => setIsOpen(true)}
-        className="whitespace-nowrap gap-2 bg-violet-600 hover:bg-violet-700 text-white"
+        className="whitespace-nowrap gap-2 bg-[#006239] text-white hover:opacity-80 [box-shadow:0_-3px_8px_0_#ffffff60_inset]"
       >
         <UserPlus size={16} />
         <span className="hidden sm:inline">Invite User</span>

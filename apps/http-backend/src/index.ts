@@ -5,16 +5,14 @@ import { CreateRoomSchema, CreateUserSchema, SigninSchema } from '@repo/common/t
 import { prismaClient  } from '@repo/db/client';
 import bcrypt from 'bcryptjs';
 import cors from 'cors';
-import nodemailer from 'nodemailer';
-// import { EMAIL_USER, EMAIL_PASSWORD, NEXT_PUBLIC_FRONTEND_URL } from './config';
 
 const app = express();
 
 const corsOptions = {
   origin : [
     process.env.NEXT_PUBLIC_FRONTEND_URL!,
-    process.env.NEXT_PUBLIC_WS_URL!,
-    process.env.NEXT_PUBLIC_BACKEND_URL!
+    process.env.NEXT_PUBLIC_BACKEND_URL!,
+    process.env.NEXT_PUBLIC_WS_URL!
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true

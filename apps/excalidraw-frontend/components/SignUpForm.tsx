@@ -50,7 +50,7 @@ const SignUpForm = ({ onToggleForm }: SignUpFormProps) => {
     setIsLoading(true);
     try {
       // This is where you would handle registration
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/signup`, {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/register`, {
           username: data.username,
           password: data.password,
           name: data.name

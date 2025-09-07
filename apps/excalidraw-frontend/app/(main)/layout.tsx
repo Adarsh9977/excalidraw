@@ -62,20 +62,20 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-full">
-        <Sidebar>
-          <SidebarHeader className="border-b border-border/50 p-5">
-            <div className="flex items-center gap-2 justify-center">
-              <FileEdit className="h-6 w-6 text-purple-800 dark:text-purple-300" />
-              <span className="font-extrabold tracking-wider text-lg text-purple-800 dark:text-purple-300">Whiteboard</span>
+      <div className="flex h-screen w-full rounded-lg overflow-hidden">
+        <Sidebar variant='floating' className='bg-black overflow-hidden'>
+          <SidebarHeader className=" p-5 bg-black rounded-lg">
+            <div className="flex items-center gap-2 justify-center border-b border-dashed border-[#006239] pb-1">
+              
+              <span className="font-semibold  text-lg text-[#009758]">Whiteboard</span>
             </div>
           </SidebarHeader>
 
-          <SidebarContent>
-            <SidebarMenu className=' flex flex-col justify-start h-full w-full gap-2 py-2 px-2'>
+          <SidebarContent className='bg-black rounded-lg'>
+            <SidebarMenu className=' flex flex-col justify-start h-full w-full gap-1 py-2 px-2'>
                 {menuItems.map((item) => (
-                    <SidebarMenuItem key={item.label}>
-                    <SidebarMenuButton asChild onClick={() => setActive(item.label)} isActive={active === item.label} tooltip={item.label} className='data-[active=true]:bg-gradient-to-r from-violet-300 to-purple-400 dark:from-violet-800 dark:to-purple-900'>
+                    <SidebarMenuItem key={item.label} className=''>
+                    <SidebarMenuButton asChild onClick={() => setActive(item.label)} isActive={active === item.label} tooltip={item.label} className='data-[active=true]:bg-[#006239] data-[active=true]:text-black data-[active=true]:[box-shadow:0_-3px_8px_0_#ffffff60_inset] data-[active=true]:text-white '>
                         <Link href={item.href}>
                         <item.icon />
                         <span>{item.label}</span>
@@ -86,13 +86,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </SidebarMenu>
           </SidebarContent>
 
-          <SidebarFooter className="border-t border-border/50">
-            <SidebarMenu>
+          <SidebarFooter className=" bg-black rounded-lg overflow-hidden">
+            <div className=" border border-[#006239] border-dashed rounded-md p-2 ">
+              <SidebarMenu className='gap-0'>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Home">
                   <Link href="/">
                     <Home />
-                    <span>Back to Home</span>
+                    <span className=' text-xs'>Back to Home</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -104,18 +105,19 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 }}>
                   <button>
                     <LogOut />
-                    <span>Logout</span>
+                    <span className=' text-xs'>Logout</span>
                   </button>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
+            </div>
           </SidebarFooter>
         </Sidebar>
         
         <SidebarInset className="overflow-auto hide-scrollbar">
-          <div className="sticky top-0 bg-sidebar/30 backdrop-blur flex justify-end items-center p-4 border-b">
+          <div className="sticky top-0 bg-black backdrop-blur flex justify-end items-center p-4 border-b border-[#006239] border-dashed mr-2">
             <div className="flex items-center gap-4">
-              <ThemeToggle />
+              {/* <ThemeToggle /> */}
               <SidebarTrigger />
             </div>
           </div>
