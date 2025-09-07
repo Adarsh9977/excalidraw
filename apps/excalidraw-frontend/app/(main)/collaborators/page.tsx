@@ -8,7 +8,6 @@ import { getAuthToken } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
 
-// Add metadata for SEO
 export const metadata: Metadata = {
   title: 'Manage Collaborators',
   description: 'Manage your team members and invite new collaborators to your Excalidraw projects',
