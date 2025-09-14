@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -33,31 +34,31 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.sha }}
 
-      - name: Clean up Docker resources on VM
+      - name: Deploy to VM
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
-          mkdir -p /home/runner/.ssh
-          chmod 700 ~/ssh_key
-          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.232.153.196 -t "
-            # Clean up unused containers, images, and volumes
-            docker system prune -af --volumes
-            docker images
-            docker ps -a
-          "
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
+          chmod 600 ~/ssh_key
 
-      - name: Deploy to the VM
-        run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
-          mkdir  -p /home/runner/.ssh
-          ls /home/runner/.ssh
-          chmod 700 /home/runner/ssh_key
-          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.232.153.196 -t "docker stop frontend || true;
-          docker rm frontend || true;
-          docker run --name frontend -d -p 3000:3000 \
-          -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
-          -e NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }} \
-          -e NEXT_PUBLIC_WS_URL=${{ secrets.NEXT_PUBLIC_WS_URL }} \
-          -e EMAIL_USER=${{ secrets.EMAIL_USER }} \
-          -e EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }} \
-          -e NEXT_PUBLIC_FRONTEND_URL=${{ secrets.NEXT_PUBLIC_FRONTEND_URL }} \
-          adarsh9770/frontend:${{ github.sha }}"
+          ssh -o StrictHostKeyChecking=no \
+              -o ServerAliveInterval=60 \
+              -o ServerAliveCountMax=5 \
+              -i ~/ssh_key ubuntu@13.232.153.196 << 'EOF'
+
+            # Clean up old containers/images
+            docker stop frontend || true
+            docker rm frontend || true
+            docker system prune -af --volumes || true
+
+            # Pull latest image
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.sha }}
+
+            # Run new container
+            docker run --name frontend -d -p 3000:3000 \
+              -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
+              -e NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }} \
+              -e NEXT_PUBLIC_WS_URL=${{ secrets.NEXT_PUBLIC_WS_URL }} \
+              -e EMAIL_USER=${{ secrets.EMAIL_USER }} \
+              -e EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }} \
+              -e NEXT_PUBLIC_FRONTEND_URL=${{ secrets.NEXT_PUBLIC_FRONTEND_URL }} \
+              adarsh9770/frontend:${{ github.sha }}
+          EOF
