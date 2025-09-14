@@ -45,34 +45,6 @@ const HeroSection = ({ token }: { token: string | undefined }) => {
         className="absolute inset-0 object-center object-bottom"
         priority
       />
-      {/* Animated background elements */}
-      {/* <div className="absolute inset-0 overflow-hidden opacity-80 pointer-events-none">
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-green-300"
-            style={{
-              width: backgroundCircles[i].width,
-              height: backgroundCircles[i].height,
-              left: backgroundCircles[i].left,
-              top: backgroundCircles[i].top
-            }}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ 
-              scale: 1, 
-              opacity: 0.4,
-              x: 0,
-              y: 0,
-            }}
-            transition={{ 
-              duration: 5,
-              repeat: Infinity,
-              repeatType: "reverse",
-              delay: i * 0.5,
-            }}
-          />
-        ))}
-      </div> */}
 
       <div className="container mx-auto px-4 relative z-10 ">
         <div className="flex flex-col lg:flex-row items-center gap-12 w-full">
