@@ -28,7 +28,7 @@ const CTASection = () => {
     setDecorativeElements(elements);
   }, []);
   return (
-    <section className="py-20 bg-gradient-to-br from-violet-600 to-indigo-700 dark:bg-gradient-to-br dark:from-violet-900 dark:to-indigo-900">
+    <section className="py-20 [box-shadow:0px_-90px_140px_-40px_#126759_inset] bg-black">
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden opacity-10">
         {decorativeElements.map((element, i) => (
@@ -58,7 +58,7 @@ const CTASection = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <motion.h2
-            className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-white"
+            className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-white tracking-tighter"
             initial={{ opacity: 0, y: -20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -68,7 +68,7 @@ const CTASection = () => {
           </motion.h2>
           
           <motion.p
-            className="text-xl text-violet-100 mb-8 max-w-2xl mx-auto"
+            className="text-lg leading-tight text-balance mb-8 max-w-2xl mx-auto"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -86,29 +86,14 @@ const CTASection = () => {
           >
             <Button 
               size="lg" 
-              className="bg-white text-violet-700 hover:bg-violet-50 rounded-full"
+              className="rounded-full"
             >
               Start for free
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="border-white text-white bg-white/5 rounded-full"
-            >
-              Contact sales
-            </Button>
           </motion.div>
           
-          <motion.p
-            className="text-violet-200 mt-6 text-sm"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            viewport={{ once: true }}
-          >
-            No credit card required. Free plan includes 3 boards and basic features.
-          </motion.p>
+         
         </div>
       </div>
     </section>

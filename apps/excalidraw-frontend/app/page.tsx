@@ -18,8 +18,8 @@ export default async function Home() {
       <main className="hide-scrollbar ">
         <HeroSection token={token} />
         <FeaturesSection />
-        <HowItWorksSection />
-        <TestimonialsSection />
+        {/* <HowItWorksSection /> */}
+        {/* <TestimonialsSection /> */}
         <CTASection />
       </main>
 

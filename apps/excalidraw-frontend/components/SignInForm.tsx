@@ -49,7 +49,7 @@ const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
         // This is where you would handle authentication
-        const res = await axios.post(`NEXT_PUBLIC_BACKEND_URL/signin`, {
+        const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/signin`, {
             username: data.username,
             password: data.password
         });
@@ -75,15 +75,15 @@ const togglePasswordVisibility = () => {
 };
 
 return (
-    <Card className="w-full max-w-md mx-auto overflow-hidden border-0 shadow-lg py-0">
-    <CardHeader className="space-y-1 py-5 bg-gradient-to-r from-purple-500/30 to-indigo-500/10 pb-6">
+    <Card className="w-full max-w-md mx-auto overflow-hidden border border-[#006239] border-dashed bg-black shadow-lg py-0">
+    <CardHeader className="space-y-1 py-5 border-b border-[#006239] border-dashed">
         <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
         <CardDescription className="text-center">
         Enter your email and password to sign in to your account
         </CardDescription>
     </CardHeader>
-    <CardContent className="pt-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <CardContent>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -101,14 +101,6 @@ return (
         <div className="space-y-2">
             <div className="flex justify-between items-center">
             <Label htmlFor="password">Password</Label>
-            <Button
-                variant="link"
-                size="sm"
-                className="px-0 font-normal text-xs text-muted-foreground"
-                type="button"
-            >
-                Forgot password?
-            </Button>
             </div>
             <div className="relative">
             <Input
@@ -140,7 +132,7 @@ return (
         </div>
         <Button
             type="submit"
-            className="w-full mt-5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+            className="w-full mt-5"
             disabled={isLoading}
         >
             {isLoading ? (
@@ -162,7 +154,7 @@ return (
         Don't have an account?{" "}
         <Button
             variant="link"
-            className="p-0 h-auto text-purple-600 hover:text-purple-800"
+            className="p-0 h-auto text-[#006239] hover:text-[#009758]"
             onClick={onToggleForm}
         >
             Sign up

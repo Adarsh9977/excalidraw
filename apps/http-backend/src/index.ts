@@ -10,9 +10,9 @@ const app = express();
 
 const corsOptions = {
   origin : [
-    process.env.NEXT_PUBLIC_FRONTEND_URL!,
-    process.env.NEXT_PUBLIC_BACKEND_URL!,
-    process.env.NEXT_PUBLIC_WS_URL!
+    process.env.NEXT_PUBLIC_FRONTEND_URL! || 'http://localhost:3000',
+    process.env.NEXT_PUBLIC_BACKEND_URL! || 'http://localhost:3001',
+    process.env.NEXT_PUBLIC_WS_URL! || 'ws://localhost:8080'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true

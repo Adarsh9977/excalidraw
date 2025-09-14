@@ -77,8 +77,8 @@ const SignUpForm = ({ onToggleForm }: SignUpFormProps) => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto overflow-hidden border-0 shadow-lg py-0">
-      <CardHeader className="space-y-1 py-5 bg-gradient-to-r from-purple-500/30 to-indigo-500/10 pb-6">
+    <Card className="w-full max-w-md mx-auto overflow-hidden border border-[#006239] border-dashed bg-black shadow-lg py-0">
+      <CardHeader className="space-y-1 py-5 border-b border-[#006239] border-dashed pb-6">
         <CardTitle className="text-2xl font-bold text-center">
           Create an Account
         </CardTitle>
@@ -86,8 +86,8 @@ const SignUpForm = ({ onToggleForm }: SignUpFormProps) => {
           Enter your information to create an account
         </CardDescription>
       </CardHeader>
-      <CardContent className="pt-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <CardContent>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="name">Full Name</Label>
             <Input
@@ -147,7 +147,7 @@ const SignUpForm = ({ onToggleForm }: SignUpFormProps) => {
           </div>
           <Button
             type="submit"
-            className="w-full mt-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+            className="w-full mt-5"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -169,7 +169,7 @@ const SignUpForm = ({ onToggleForm }: SignUpFormProps) => {
           Already have an account?{" "}
           <Button
             variant="link"
-            className="p-0 h-auto text-indigo-600 hover:text-indigo-800"
+            className="p-0 h-auto text-[#006239] hover:text-[#009758]"
             onClick={onToggleForm}
           >
             Sign in

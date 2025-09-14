@@ -9,49 +9,50 @@ import {
   Sparkles,
   Zap
 } from "lucide-react";
+import { Spotlight } from "./ui/spotlight";
 
 const features = [
   {
-    icon: <PenTool className="h-8 w-8 text-violet-600" />,
+    icon: <PenTool className="h-8 w-8 text-[#0b7d53]" />,
     title: "Sketch Naturally",
     description:
       "Create diagrams that look hand-drawn with our smooth sketching tools. Perfect for flowcharts, wireframes, and mindmaps.",
-    color: "violet",
+    color: "",
   },
   {
-    icon: <Users className="h-8 w-8 text-blue-600" />,
+    icon: <Users className="h-8 w-8 text-[#0b7d53]" />,
     title: "Collaborate in Real-time",
     description:
       "Work together with your team in real-time. See everyone's cursors and changes as they happen.",
-    color: "blue",
+    color: "",
   },
   {
-    icon: <Share2 className="h-8 w-8 text-pink-600" />,
+    icon: <Share2 className="h-8 w-8 text-[#0b7d53]" />,
     title: "Share Instantly",
     description:
       "Generate a shareable link in one click. Control who can view or edit your whiteboard.",
-    color: "pink",
+    color: "",
   },
   {
-    icon: <Download className="h-8 w-8 text-emerald-600" />,
+    icon: <Download className="h-8 w-8 text-[#0b7d53]" />,
     title: "Export Anywhere",
     description:
       "Export your sketches as PNG, SVG, or PDF. Embed them in your documents or presentations.",
-    color: "emerald",
+    color: "",
   },
   {
-    icon: <Sparkles className="h-8 w-8 text-amber-600" />,
+    icon: <Sparkles className="h-8 w-8 text-[#0b7d53]" />,
     title: "Beautiful Templates",
     description:
       "Start quickly with our library of templates for various use cases, from UX design to project planning.",
-    color: "amber",
+    color: "",
   },
   {
-    icon: <Zap className="h-8 w-8 text-cyan-600" />,
+    icon: <Zap className="h-8 w-8 text-[#0b7d53]" />,
     title: "Smart Objects",
     description:
       "Add interactive elements like sticky notes, connectors, and shapes that maintain their hand-drawn style.",
-    color: "cyan",
+    color: "",
   },
 ];
 
@@ -81,11 +82,13 @@ const FeaturesSection = () => {
   };
 
   return (
-    <section className="py-24 bg-gradient-to-b from-white to-violet-200 dark:bg-gradient-to-b dark:from-violet-900/50 dark:to-violet-900/90">
+    <section className="py-24 bg-black relative overflow-hidden">
+      <Spotlight className="absolute -top-20 left-0 w-full h-full" fill="#0d8c5d" />
+      <Spotlight className="absolute -top-[750px] left-[100%] w-full h-full scale-y-[-1] hidden lg:block" fill="#0d8c5d" />
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <motion.h2 
-            className="text-3xl md:text-4xl font-bold mb-4 text-gray-900"
+            className="text-3xl md:text-5xl font-bold mb-4 text-white tracking-tighter"
             initial={{ opacity: 0, y: -20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -94,7 +97,7 @@ const FeaturesSection = () => {
             Everything you need for better collaboration
           </motion.h2>
           <motion.p 
-            className="text-xl text-gray-600 max-w-2xl mx-auto dark:text-primary"
+            className="text-xl text-gray-600 max-w-2xl mx-auto dark:text-primary leading-tight"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -114,12 +117,12 @@ const FeaturesSection = () => {
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              className="relative bg-white dark:bg-transparent/80 dark:backdrop-blur rounded-xl border dark:borded-1 border-gray-100 dark:border-primary p-6 shadow-sm hover:shadow-md transition-shadow"
+              className="relative bg-white dark:bg-transparent/80 dark:backdrop-blur rounded-2xl border border-[#202020] hover:[box-shadow:-20px_-20px_120px_0_#126759_inset]  p-6 transition-shadow"
               variants={item}
               whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               <div className="mb-4">
-                <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl ${featureColors[feature.color]} p-2`}>
+                <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl border border-dashed border-[#0b7d53] ${featureColors[feature.color]} p-2`}>
                   {feature.icon}
                 </div>
               </div>

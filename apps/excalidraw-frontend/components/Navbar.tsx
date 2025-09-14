@@ -7,7 +7,7 @@ export function Navbar ({ token }: { token: string | undefined }) {
   const router = useRouter();
 
   return (
-    <nav className="w-full py-4 px-6 md:px-8 bg-violet-400 dark:bg-violet-900 relative z-1">
+    <nav className="w-full py-4 px-6 md:px-8 bg-neutral-800/20 border-b fixed top-0 z-50 backdrop-blur-2xl ">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-primary dark:text-primary">Whiteboard</h1>
@@ -19,10 +19,6 @@ export function Navbar ({ token }: { token: string | undefined }) {
             <Button variant="ghost">Pricing</Button>
             <Button variant="ghost">About</Button>
             <Button variant="ghost">Contact</Button>
-          </div>
-          
-          <div>
-            <ThemeToggle />
           </div>
           
           <Button onClick={()=>{

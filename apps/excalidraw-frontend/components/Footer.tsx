@@ -2,19 +2,19 @@ import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-50 dark:bg-gray-900 w-full py-4 px-6 md:px-8 text-center">
+    <footer className="bg-black w-full py-4 px-6 md:px-8 text-center pt-6">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div className="col-span-1 md:col-span-1">
             <div className="font-bold text-2xl text-gray-900 dark:text-primary mb-4 flex items-center">
               <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
-                <rect width="32" height="32" rx="8" fill="#8B5CF6" />
+                <rect width="32" height="32" rx="8" fill="#006239" />
                 <path d="M8 16C8 11.5817 11.5817 8 16 8C20.4183 8 24 11.5817 24 16C24 20.4183 20.4183 24 16 24" stroke="white" strokeWidth="3" strokeLinecap="round" />
                 <path d="M20 16C20 18.2091 18.2091 20 16 20C13.7909 20 12 18.2091 12 16C12 13.7909 13.7909 12 16 12" stroke="white" strokeWidth="3" strokeLinecap="round" />
               </svg>
               Whiteboard
             </div>
-            <p className="text-gray-600 dark:text-primary mb-4">
+            <p className="text-gray-600 dark:text-primary mb-4 text-left">
               Sketch together, create together. The virtual whiteboard for collaborative teams.
             </p>
             <div className="flex space-x-4">
@@ -70,7 +70,7 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-neutral-800 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-600 dark:text-gray-400 mt-3.5 text-sm">
             © {new Date().getFullYear()} Whiteboard. All rights reserved.
           </p>
