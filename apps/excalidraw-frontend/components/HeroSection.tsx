@@ -39,7 +39,7 @@ const HeroSection = ({ token }: { token: string | undefined }) => {
   return (
     <div className="relative overflow-hidden bg-black py-12 lg:py-24 flex items-center justify-center">
       <Image
-        src="/background.png"
+        src="https://res.cloudinary.com/dwfqmux0y/image/upload/v1757872061/Hero_Gradients_003_u292xl.png"
         alt="image"
         fill
         className="absolute inset-0 object-center object-bottom"
@@ -126,7 +126,7 @@ const HeroSection = ({ token }: { token: string | undefined }) => {
               </Button>
               <div className="p-3 lg:p-6 rounded-3xl border bg-neutral-900/20 backdrop-blur-2xl backdrop-saturation-200 w-full lg:w-[1000px] lg:h-[550px] relative [box-shadow:0_-20px_160px_0_#126759]">
                 <Image
-                  src="/hero-image.png"
+                  src="https://res.cloudinary.com/dwfqmux0y/image/upload/v1757872247/hero-image_yndsk9.png"
                   alt="image"
                   width={1000}
                   height={400}
