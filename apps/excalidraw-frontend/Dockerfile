@@ -26,4 +26,6 @@ RUN pnpm db:generate
 RUN pnpm build
 EXPOSE 3000
 
-CMD ["pnpm", "run", "start:frontend"]
+WORKDIR /usr/src/app/apps/excalidraw-frontend
+
+CMD ["pnpm", "start"]
