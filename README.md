@@ -34,8 +34,6 @@ This project has some additional tools already setup:
 
 ## Getting Started
 
-
-
 ### Prerequisites
 
 - Node.js >= 18
