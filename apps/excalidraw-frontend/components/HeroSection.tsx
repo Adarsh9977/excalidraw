@@ -13,7 +13,7 @@ interface BackgroundCircle {
   top: string;
 }
 
-const HeroSection = ({ token }: { token: string | undefined }) => {
+const HeroSection = ({ token }: { token: string | null }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [backgroundCircles, setBackgroundCircles] = useState<BackgroundCircle[]>(
     [...Array(6)].map(() => ({
