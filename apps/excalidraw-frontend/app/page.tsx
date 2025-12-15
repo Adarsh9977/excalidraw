@@ -18,12 +18,15 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <Navbar token={token} />
+
       <main>
         <HeroSection token={token} />
         <FeaturesSection />
         <CTASection />
       </main>
+
       <Footer />
     </div>
   );
 }
+
