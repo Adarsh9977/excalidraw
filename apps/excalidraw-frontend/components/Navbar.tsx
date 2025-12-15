@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";import { useRouter } from "next/navigation";
 ;
 
-export function Navbar ({ token }: { token: string | undefined }) {
+export function Navbar ({ token }: { token: string | null }) {
   const router = useRouter();
 
   return (
