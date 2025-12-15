@@ -12,7 +12,9 @@ export default function Home() {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    getAuthToken().then(setToken).catch(() => setToken(null));
+    getAuthToken()
+      .then((t) => setToken(t ?? null))
+      .catch(() => setToken(null));
   }, []);
 
   return (
@@ -29,4 +31,3 @@ export default function Home() {
     </div>
   );
 }
-
