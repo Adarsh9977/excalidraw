@@ -34,7 +34,7 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
           mkdir -p /home/runner/.ssh
           chmod 700 ~/ssh_key
-          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.232.153.196 -t"
+          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.232.153.196 -t "
             # Clean up unused containers, images, and volumes
             docker system prune -af --volumes
             docker images
