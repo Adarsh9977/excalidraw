@@ -49,6 +49,7 @@ export function AccountSettings({ initialData }: AccountSettingsProps) {
       toast.error('Invalid data');
       return;
     }
+    
     const res = await updateUserProfile(data.data);
     if(res.status === 200) {
         router.refresh();
