@@ -12,7 +12,6 @@ import { useState } from 'react';
 import { Collaborator, updateUserRole } from '@/lib/api/users';
 import { useRouter } from 'next/navigation';
 
-
 interface UserCardProps {
   collaborator: Collaborator;
 }
