@@ -34,7 +34,6 @@ export function AccountSettings({ initialData }: AccountSettingsProps) {
     bio: initialData.bio || ''
   });
   const router = useRouter();
-
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
